@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSM Tool - Cloud Architecture Simulator</title>
+    <link rel="stylesheet" href="layout-styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <rect x="4" y="4" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <rect x="16" y="4" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <rect x="4" y="16" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <rect x="16" y="16" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <line x1="12" y1="8" x2="16" y2="8" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="8" y1="12" x2="8" y2="16" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <span class="logo-text">FSM Tool</span>
+                </div>
+            </div>
+
+            <div class="header-center">
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="build">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        <span>Build</span>
+                    </button>
+                    <button class="mode-btn" data-mode="simulation">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                        <span>Simulate</span>
+                    </button>
+                    <button class="mode-btn" data-mode="analyze">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="2" x2="12" y2="22"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h.5M7 19h8a3.5 3.5 0 0 0 0-7H14"/>
+                        </svg>
+                        <span>Analyze</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button class="icon-btn" title="Save">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" title="Undo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 7v6h6"/>
+                        <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" title="Redo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 7v6h-6"/>
+                        <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7"/>
+                    </svg>
+                </button>
+                <div class="divider"></div>
+                <button class="icon-btn" title="Settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6m-17.78 7.78l4.24-4.24m5.08-5.08l4.24-4.24"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" title="Help">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        <!-- Left Sidebar -->
+        <aside class="sidebar sidebar-left">
+            <div class="sidebar-header">
+                <h3>Components</h3>
+                <button class="sidebar-collapse-btn" title="Collapse sidebar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="sidebar-content">
+                <div class="search-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" placeholder="Search components..." class="search-input">
+                </div>
+
+                <div class="component-categories">
+                    <div class="category">
+                        <button class="category-header">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                            <span>Network</span>
+                            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-type="api-gateway">
+                                <div class="component-icon">🌐</div>
+                                <span>API Gateway</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-type="load-balancer">
+                                <div class="component-icon">⚖️</div>
+                                <span>Load Balancer</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-type="firewall">
+                                <div class="component-icon">🔥</div>
+                                <span>Firewall</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <button class="category-header">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="2" y1="17" x2="22" y2="17"/>
+                            </svg>
+                            <span>Compute</span>
+                            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-type="service">
+                                <div class="component-icon">⚙️</div>
+                                <span>Service</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-type="function">
+                                <div class="component-icon">λ</div>
+                                <span>Function</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-type="container">
+                                <div class="component-icon">📦</div>
+                                <span>Container</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <button class="category-header">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                            </svg>
+                            <span>Storage</span>
+                            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-type="database">
+                                <div class="component-icon">🗄️</div>
+                                <span>Database</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-type="cache">
+                                <div class="component-icon">⚡</div>
+                                <span>Cache</span>
+                            </div>
+                            <div class="component-item" draggable="true" data-type="queue">
+                                <div class="component-icon">📨</div>
+                                <span>Queue</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <div class="canvas-container">
+            <div class="canvas-toolbar">
+                <div class="toolbar-group">
+                    <button class="tool-btn" title="Select" data-tool="select">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6-6 6 6M6 9h12M6 9v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9"/>
+                        </svg>
+                    </button>
+                    <button class="tool-btn" title="Connect" data-tool="connect">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="6" cy="6" r="3"/>
+                            <circle cx="18" cy="18" r="3"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="toolbar-group">
+                    <button class="tool-btn" title="Zoom In">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35M11 8v6M8 11h6"/>
+                        </svg>
+                    </button>
+                    <button class="tool-btn" title="Zoom Out">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35M8 11h6"/>
+                        </svg>
+                    </button>
+                    <button class="tool-btn" title="Fit to View">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="toolbar-group">
+                    <button class="tool-btn" title="Delete">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="canvas" id="canvas">
+                <svg class="canvas-grid" width="100%" height="100%"></svg>
+                <div class="canvas-content"></div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar sidebar-right">
+            <div class="sidebar-header">
+                <h3>Properties</h3>
+                <button class="sidebar-collapse-btn" title="Collapse sidebar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="sidebar-content">
+                <div class="properties-panel">
+                    <div class="property-group">
+                        <label class="property-label">Name</label>
+                        <input type="text" class="property-input" placeholder="Component name">
+                    </div>
+
+                    <div class="property-group">
+                        <label class="property-label">Type</label>
+                        <select class="property-select">
+                            <option>Select type...</option>
+                            <option>API Gateway</option>
+                            <option>Database</option>
+                            <option>Service</option>
+                        </select>
+                    </div>
+
+                    <div class="property-group">
+                        <label class="property-label">Description</label>
+                        <textarea class="property-textarea" placeholder="Component description" rows="3"></textarea>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="property-group">
+                        <label class="property-label">State Machine</label>
+                        <div class="state-machine-preview">
+                            <div class="state-item">idle</div>
+                            <div class="state-arrow">→</div>
+                            <div class="state-item">processing</div>
+                            <div class="state-arrow">→</div>
+                            <div class="state-item">complete</div>
+                        </div>
+                    </div>
+
+                    <div class="property-group">
+                        <label class="property-label">Ports</label>
+                        <div class="ports-list">
+                            <div class="port-item">
+                                <span class="port-name">input</span>
+                                <span class="port-type">single</span>
+                            </div>
+                            <div class="port-item">
+                                <span class="port-name">output</span>
+                                <span class="port-type">single</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-left">
+            <span class="status-indicator"></span>
+            <span class="status-text">Ready</span>
+        </div>
+        <div class="footer-center">
+            <span class="info-text">Components: 0 | Connections: 0</span>
+        </div>
+        <div class="footer-right">
+            <span class="zoom-indicator">100%</span>
+            <span class="separator">|</span>
+            <span class="version-text">v1.0.0</span>
+        </div>
+    </footer>
+
+    <script src="layout-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+# Headless Mode Reference - Summary
+
+**Document**: docs/HEADLESS_MODE_REFERENCE.md  
+**Version**: 1.0.0  
+**Date**: 2026-02-25  
+**Status**: Complete
+
+## What's Included
+
+### 33 Modules Documented
+
+**Core** (6): Component, Graph, EventBus, DataBus, StateMachine, CompositeComponent
+
+**Simulation** (5): SimulationEngine, Executor, Timeline, Checkpoint, CostCalculator
+
+**Storage** (7): StorageManager, LocalStorageDriver, SessionStorageDriver, IndexDBDriver, RESTClient, WebSocketClient, Serializer
+
+**Build Mode** (4): ComponentLibrary, BuildCanvas, ComponentConfigPanel, DataBusManager
+
+**Analysis** (5): LogParser, LogReplay, Metrics, BottleneckDetector, ReportGenerator
+
+**Stochastic** (3): StochasticConfig, MultipleRunManager, StatisticalAnalysis
+
+**Utility** (3): URNGenerator, Logger, PerformanceMonitor
+
+### For Each Module
+
+- Constructor signature
+- Configuration options
+- All public methods
+- Method parameters
+- Key properties
+
+### Event System
+
+23 event types documented:
+- 6 Component events
+- 9 System events
+- 1 DataBus event
+- 7 UI events
+
+### Seven Complete Examples
+
+1. Create a diagram
+2. Run simulation
+3. Pause, resume, and loop
+4. Analyze logs
+5. Stochastic simulation
+6. Storage and persistence
+7. Composite components
+
+## Key Features
+
+✅ All 33 modules documented  
+✅ 200+ public methods  
+✅ 50+ configuration options  
+✅ 23 event types  
+✅ 7 complete examples  
+✅ 2,500+ lines of documentation  
+✅ Single comprehensive document  
+
+## Branch
+
+duo-edit-20260225-082146

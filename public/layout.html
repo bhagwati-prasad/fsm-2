@@ -1,0 +1,148 @@
+<!-- FSM Tool - Sleek Draw.io-like Layout -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSM Tool - Cloud Architecture Simulator</title>
+    <link rel="stylesheet" href="layout-styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <rect x="4" y="4" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <rect x="16" y="4" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <rect x="4" y="16" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <rect x="16" y="16" width="8" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <line x1="12" y1="8" x2="16" y2="8" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="8" y1="12" x2="8" y2="16" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <span class="logo-text">FSM Tool</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="build">Build</button>
+                    <button class="mode-btn" data-mode="simulation">Simulate</button>
+                    <button class="mode-btn" data-mode="analyze">Analyze</button>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn" title="Save">Save</button>
+                <button class="icon-btn" title="Undo">Undo</button>
+                <button class="icon-btn" title="Redo">Redo</button>
+                <div class="divider"></div>
+                <button class="icon-btn" title="Settings">Settings</button>
+                <button class="icon-btn" title="Help">Help</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        <!-- Left Sidebar -->
+        <aside class="sidebar sidebar-left">
+            <div class="sidebar-header">
+                <h3>Components</h3>
+                <button class="sidebar-collapse-btn" title="Collapse">-</button>
+            </div>
+            <div class="sidebar-content">
+                <div class="search-box">
+                    <input type="text" placeholder="Search..." class="search-input">
+                </div>
+                <div class="component-categories">
+                    <div class="category">
+                        <button class="category-header">Network</button>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-type="api-gateway">API Gateway</div>
+                            <div class="component-item" draggable="true" data-type="load-balancer">Load Balancer</div>
+                            <div class="component-item" draggable="true" data-type="firewall">Firewall</div>
+                        </div>
+                    </div>
+                    <div class="category">
+                        <button class="category-header">Compute</button>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-type="service">Service</div>
+                            <div class="component-item" draggable="true" data-type="function">Function</div>
+                            <div class="component-item" draggable="true" data-type="container">Container</div>
+                        </div>
+                    </div>
+                    <div class="category">
+                        <button class="category-header">Storage</button>
+                        <div class="category-items">
+                            <div class="component-item" draggable="true" data-type="database">Database</div>
+                            <div class="component-item" draggable="true" data-type="cache">Cache</div>
+                            <div class="component-item" draggable="true" data-type="queue">Queue</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <div class="canvas-container">
+            <div class="canvas-toolbar">
+                <button class="tool-btn" data-tool="select">Select</button>
+                <button class="tool-btn" data-tool="connect">Connect</button>
+                <button class="tool-btn" title="Zoom In">+</button>
+                <button class="tool-btn" title="Zoom Out">-</button>
+                <button class="tool-btn" title="Fit">Fit</button>
+                <button class="tool-btn" title="Delete">Delete</button>
+            </div>
+            <div class="canvas" id="canvas">
+                <div class="canvas-content"></div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar sidebar-right">
+            <div class="sidebar-header">
+                <h3>Properties</h3>
+                <button class="sidebar-collapse-btn" title="Collapse">-</button>
+            </div>
+            <div class="sidebar-content">
+                <div class="properties-panel">
+                    <div class="property-group">
+                        <label class="property-label">Name</label>
+                        <input type="text" class="property-input" placeholder="Component name">
+                    </div>
+                    <div class="property-group">
+                        <label class="property-label">Type</label>
+                        <select class="property-select">
+                            <option>Select type...</option>
+                            <option>API Gateway</option>
+                            <option>Database</option>
+                            <option>Service</option>
+                        </select>
+                    </div>
+                    <div class="property-group">
+                        <label class="property-label">Description</label>
+                        <textarea class="property-textarea" placeholder="Description" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-left">
+            <span class="status-indicator"></span>
+            <span class="status-text">Ready</span>
+        </div>
+        <div class="footer-center">
+            <span class="info-text">Components: 0 | Connections: 0</span>
+        </div>
+        <div class="footer-right">
+            <span class="zoom-indicator">100%</span>
+            <span class="version-text">v1.0.0</span>
+        </div>
+    </footer>
+
+    <script src="layout-app.js"></script>
+</body>
+</html>
