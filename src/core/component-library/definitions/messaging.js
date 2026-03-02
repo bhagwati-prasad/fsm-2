@@ -1,6 +1,8 @@
 export const messagingDefinition = {
   name: 'Messaging',
   description: 'Messaging component',
+  capabilities: ['enqueue', 'dequeue', 'acknowledge', 'publishSubscribe'],
+  usage: 'Use for asynchronous communication and event-driven handoff between components.',
   category: 'Messaging',
   type: 'messaging',
   ports: {

@@ -59,12 +59,15 @@ export class CanvasRenderer extends UIBridge {
    * @private
    */
   initializeData() {
+    const existingNodes = new Map(this.nodes.map((node) => [node.id, node]));
+
     this.nodes = this.graph.getComponents().map((component) => ({
+      ...(existingNodes.get(component.id) || {}),
       id: component.id,
       name: component.name,
       type: component.type,
-      x: Math.random() * 400,
-      y: Math.random() * 400,
+      x: existingNodes.get(component.id)?.x ?? Math.random() * 400,
+      y: existingNodes.get(component.id)?.y ?? Math.random() * 400,
       radius: 30
     }));
 
@@ -151,6 +154,8 @@ export class CanvasRenderer extends UIBridge {
    * Render graph
    */
   render() {
+    this.initializeData();
+
     const width = this.canvas.width;
     const height = this.canvas.height;
 
@@ -259,7 +264,16 @@ export class CanvasRenderer extends UIBridge {
         urn: `ui://renderer`,
         type: 'ui:show-details',
         timestamp: new Date().toISOString(),
-        payload: { component: component.getStateSnapshot ? component.getStateSnapshot() : {} }
+        payload: {
+          component: {
+            id: component.id,
+            name: component.name,
+            title: component.metadata?.title || component.name,
+            description: component.metadata?.description || component.description || '',
+            capabilities: component.capabilities || [],
+            usage: component.usage || ''
+          }
+        }
       });
     }
   }

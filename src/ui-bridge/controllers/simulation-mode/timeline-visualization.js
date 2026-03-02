@@ -78,6 +78,7 @@ export class TimelineVisualization {
 
     this.eventBus.subscribe('system:simulation-stop', (event) => {
       this.totalFrames = event.payload.totalFrames;
+      this.currentFrame = event.payload.currentFrame !== undefined ? event.payload.currentFrame : this.currentFrame;
       this.updateDisplay();
     });
   }
@@ -109,7 +110,7 @@ export class TimelineVisualization {
       const x = moveEvent.clientX - rect.left;
       const percentage = Math.max(0, Math.min(1, x / rect.width));
       const frameNumber = Math.floor(percentage * this.totalFrames);
-      this.updateFrame(frameNumber);
+      this.engine.jumpToFrame(frameNumber);
     };
 
     const handleMouseUp = () => {

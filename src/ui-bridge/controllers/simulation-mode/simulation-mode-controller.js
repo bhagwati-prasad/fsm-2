@@ -146,8 +146,8 @@ export class SimulationModeController {
   /**
    * Start simulation
    */
-  start() {
-    const inputs = this.inputForm.getInputs();
+  start(providedInputs = null) {
+    const inputs = providedInputs || this.inputForm.getInputs();
     const initResult = this.engine.init(inputs);
 
     if (initResult.status !== 'success') {

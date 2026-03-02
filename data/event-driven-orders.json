@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "exportedAt": "2026-03-02T00:00:00.000Z",
+  "graph": {
+    "id": "event-driven-orders",
+    "name": "Event Driven Order Flow",
+    "annotations": {
+      "title": "Event Driven Order Processing",
+      "description": "Order events fan out to workers and persistence.",
+      "metadata": {
+        "domain": "commerce",
+        "pattern": "event-driven"
+      }
+    }
+  },
+  "components": [
+    {"id": "net-ingress", "name": "Ingress", "type": "network", "metadata": {"title": "Ingress", "description": "External entry", "metadata": {"role": "entry"}}},
+    {"id": "compute-order-api", "name": "Order API", "type": "compute", "metadata": {"title": "Order API", "description": "Accepts orders", "metadata": {"role": "producer"}}},
+    {"id": "msg-order-events", "name": "Order Events", "type": "messaging", "metadata": {"title": "Order Events", "description": "Primary event bus", "metadata": {"role": "broker"}}},
+    {"id": "compute-inventory-worker", "name": "Inventory Worker", "type": "compute", "metadata": {"title": "Inventory Worker", "description": "Reserves stock", "metadata": {"role": "consumer"}}},
+    {"id": "compute-billing-worker", "name": "Billing Worker", "type": "compute", "metadata": {"title": "Billing Worker", "description": "Charges payment", "metadata": {"role": "consumer"}}},
+    {"id": "db-orders", "name": "Orders DB", "type": "database", "metadata": {"title": "Orders DB", "description": "Order records", "metadata": {"role": "storage"}}},
+    {"id": "db-payments", "name": "Payments DB", "type": "database", "metadata": {"title": "Payments DB", "description": "Payment records", "metadata": {"role": "storage"}}},
+    {"id": "msg-dlq", "name": "Dead Letter Queue", "type": "messaging", "metadata": {"title": "DLQ", "description": "Failed event sink", "metadata": {"role": "recovery"}}}
+  ],
+  "connections": [
+    {"id": "c1", "source": "net-ingress", "target": "compute-order-api", "channel": "http"},
+    {"id": "c2", "source": "compute-order-api", "target": "msg-order-events", "channel": "publish"},
+    {"id": "c3", "source": "msg-order-events", "target": "compute-inventory-worker", "channel": "inventory"},
+    {"id": "c4", "source": "msg-order-events", "target": "compute-billing-worker", "channel": "billing"},
+    {"id": "c5", "source": "compute-inventory-worker", "target": "db-orders", "channel": "order-update"},
+    {"id": "c6", "source": "compute-billing-worker", "target": "db-payments", "channel": "payment-update"},
+    {"id": "c7", "source": "compute-inventory-worker", "target": "msg-dlq", "channel": "error"},
+    {"id": "c8", "source": "compute-billing-worker", "target": "msg-dlq", "channel": "error"}
+  ],
+  "dataBuses": [
+    {"id": "dbus-c1", "type": "one-to-one", "bandwidth": 2500},
+    {"id": "dbus-c2", "type": "one-to-one", "bandwidth": 2200},
+    {"id": "dbus-c3", "type": "one-to-many", "bandwidth": 1800},
+    {"id": "dbus-c4", "type": "one-to-many", "bandwidth": 1800},
+    {"id": "dbus-c5", "type": "one-to-one", "bandwidth": 1300},
+    {"id": "dbus-c6", "type": "one-to-one", "bandwidth": 1300},
+    {"id": "dbus-c7", "type": "one-to-one", "bandwidth": 900},
+    {"id": "dbus-c8", "type": "one-to-one", "bandwidth": 900}
+  ]
+}

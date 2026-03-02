@@ -25,6 +25,17 @@ export class D3Renderer extends UIBridge {
     this.selectedNode = null;
   }
 
+  getContainerDimensions() {
+    const rect = this.container?.getBoundingClientRect?.() || { width: 0, height: 0 };
+    const width = this.container?.clientWidth || rect.width || this.config.defaultWidth || 800;
+    const height = this.container?.clientHeight || rect.height || this.config.defaultHeight || 600;
+
+    return {
+      width: Math.max(1, Math.floor(width)),
+      height: Math.max(1, Math.floor(height))
+    };
+  }
+
   /**
    * Initialize D3 renderer
    * @param {HTMLElement} container - DOM container
@@ -35,13 +46,15 @@ export class D3Renderer extends UIBridge {
     super.init(container, graph, eventBus);
 
     // Create SVG
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+    const { width, height } = this.getContainerDimensions();
 
     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     this.svg.setAttribute('width', width);
     this.svg.setAttribute('height', height);
+    this.svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
     this.svg.setAttribute('class', 'fsm-graph');
+    this.svg.style.width = '100%';
+    this.svg.style.height = '100%';
     container.appendChild(this.svg);
 
     // Initialize data
@@ -61,14 +74,17 @@ export class D3Renderer extends UIBridge {
    * @private
    */
   initializeData() {
+    const existingNodes = new Map(this.nodes.map((node) => [node.id, node]));
+
     // Create nodes from components
     this.nodes = this.graph.getComponents().map((component) => ({
+      ...(existingNodes.get(component.id) || {}),
       id: component.id,
       urn: component.urn,
       name: component.name,
       type: component.type,
-      x: Math.random() * 400,
-      y: Math.random() * 400
+      x: existingNodes.get(component.id)?.x ?? Math.random() * 400,
+      y: existingNodes.get(component.id)?.y ?? Math.random() * 400
     }));
 
     // Create links from connections
@@ -151,6 +167,18 @@ export class D3Renderer extends UIBridge {
    * Render graph
    */
   render() {
+    const { width, height } = this.getContainerDimensions();
+    this.svg.setAttribute('width', width);
+    this.svg.setAttribute('height', height);
+    this.svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+    if (this.simulation) {
+      this.simulation.width = width;
+      this.simulation.height = height;
+    }
+
+    this.initializeData();
+
     // Clear SVG
     while (this.svg.firstChild) {
       this.svg.removeChild(this.svg.firstChild);
@@ -203,8 +231,39 @@ export class D3Renderer extends UIBridge {
       text.setAttribute('pointer-events', 'none');
       text.textContent = node.name;
 
+      const infoIconBg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      infoIconBg.setAttribute('cx', node.x + 22);
+      infoIconBg.setAttribute('cy', node.y - 22);
+      infoIconBg.setAttribute('r', '8');
+      infoIconBg.setAttribute('fill', '#ffffff');
+      infoIconBg.setAttribute('stroke', '#0066cc');
+      infoIconBg.setAttribute('stroke-width', '1.5');
+      infoIconBg.setAttribute('class', `component-info-icon info-${node.id}`);
+
+      const infoIconText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      infoIconText.setAttribute('x', node.x + 22);
+      infoIconText.setAttribute('y', node.y - 22);
+      infoIconText.setAttribute('text-anchor', 'middle');
+      infoIconText.setAttribute('dy', '0.35em');
+      infoIconText.setAttribute('font-size', '10');
+      infoIconText.setAttribute('fill', '#0066cc');
+      infoIconText.setAttribute('cursor', 'pointer');
+      infoIconText.textContent = 'i';
+
+      infoIconBg.addEventListener('click', (event) => {
+        event.stopPropagation();
+        this.showComponentDetails(node.id);
+      });
+
+      infoIconText.addEventListener('click', (event) => {
+        event.stopPropagation();
+        this.showComponentDetails(node.id);
+      });
+
       g.appendChild(circle);
       g.appendChild(text);
+      g.appendChild(infoIconBg);
+      g.appendChild(infoIconText);
     });
 
     this.updateTransform();
@@ -295,7 +354,16 @@ export class D3Renderer extends UIBridge {
         urn: `ui://renderer`,
         type: 'ui:show-details',
         timestamp: new Date().toISOString(),
-        payload: { component: component.getStateSnapshot ? component.getStateSnapshot() : {} }
+        payload: {
+          component: {
+            id: component.id,
+            name: component.name,
+            title: component.metadata?.title || component.name,
+            description: component.metadata?.description || component.description || '',
+            capabilities: component.capabilities || [],
+            usage: component.usage || ''
+          }
+        }
       });
     }
   }

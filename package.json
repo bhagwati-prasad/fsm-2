@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "start:unbundled": "UNBUNDLED=true node src/server.js",
+    "dev:unbundled": "UNBUNDLED=true nodemon src/server.js",
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
     "test": "jest",

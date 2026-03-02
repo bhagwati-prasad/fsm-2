@@ -35,13 +35,15 @@ export class ComponentLibrary {
     }
 
     return new Component({
+      ...config,
       id: config.id || `${type}-${Date.now()}`,
       name: config.name || definition.name,
       type,
-      description: definition.description,
-      ports: definition.ports,
-      stateMachine: definition.stateMachine,
-      ...config
+      description: config.description ?? definition.description,
+      capabilities: config.capabilities ?? definition.capabilities,
+      usage: config.usage ?? definition.usage,
+      ports: config.ports || definition.ports,
+      stateMachine: config.stateMachine || definition.stateMachine
     });
   }
 }

@@ -43,6 +43,66 @@ export class BuildModeController {
    * @private
    */
   createLayout() {
+    const existingLayout = this.container.querySelector('.build-mode-layout');
+    if (existingLayout) {
+      this.layoutElement = existingLayout;
+      return;
+    }
+
+    const legacyPalette = this.container.querySelector('.palette-sidebar');
+    const legacyCanvas = this.container.querySelector('.canvas-area');
+    const legacyConfig = this.container.querySelector('.config-panel');
+
+    if (legacyPalette || legacyCanvas || legacyConfig) {
+      const ensureChild = (parent, selector, tagName = 'div', className = null) => {
+        if (!parent) {
+          return null;
+        }
+
+        let child = parent.querySelector(selector);
+        if (!child) {
+          child = document.createElement(tagName);
+          if (className) {
+            child.className = className;
+          }
+          parent.appendChild(child);
+        }
+        return child;
+      };
+
+      if (legacyPalette) {
+        legacyPalette.classList.add('build-sidebar');
+        ensureChild(legacyPalette, '.sidebar-palette', 'div', 'sidebar-palette');
+        ensureChild(legacyPalette, '.sidebar-databus', 'div', 'sidebar-databus');
+      }
+
+      if (legacyCanvas) {
+        legacyCanvas.classList.add('build-main');
+
+        const toolbar = ensureChild(legacyCanvas, '.build-toolbar', 'div', 'build-toolbar');
+        if (toolbar && toolbar.children.length === 0) {
+          toolbar.innerHTML = `
+            <button class="btn-save">Save</button>
+            <button class="btn-annotations">Annotations</button>
+            <button class="btn-download">Download</button>
+            <button class="btn-upload">Upload</button>
+            <button class="btn-clear">Clear</button>
+            <button class="btn-switch-mode">Switch to Simulation</button>
+            <input type="file" class="file-upload-input" accept="application/json" style="display:none;">
+          `;
+        }
+
+        ensureChild(legacyCanvas, '.build-canvas-container', 'div', 'build-canvas-container');
+      }
+
+      if (legacyConfig) {
+        legacyConfig.classList.add('build-config');
+      }
+
+      this.layoutElement = this.container;
+      return;
+    }
+
     const layout = document.createElement('div');
     layout.className = 'build-mode-layout';
     layout.innerHTML = `
@@ -112,6 +172,10 @@ export class BuildModeController {
     this.eventBus.subscribe('ui:component-delete-requested', (event) => {
       this.canvas.removeComponent(event.payload.componentId);
     });
+
+    this.eventBus.subscribe('ui:show-details', (event) => {
+      this.showComponentDetails(event.payload.component);
+    });
   }
 
   /**
@@ -129,6 +193,26 @@ export class BuildModeController {
     });
 
     this.canvas.addComponent(component, event.payload.x, event.payload.y);
+    this.dataBusManager.createDefaultDataBusesForComponent(component.id);
+  }
+
+  showComponentDetails(component) {
+    if (!component) {
+      return;
+    }
+
+    const capabilities = Array.isArray(component.capabilities)
+      ? component.capabilities.join(', ')
+      : 'N/A';
+
+    const details = [
+      `Title: ${component.title || component.name || component.id}`,
+      `Description: ${component.description || ''}`,
+      `Capabilities: ${capabilities || 'N/A'}`,
+      `Usage: ${component.usage || 'N/A'}`
+    ].join('\n');
+
+    alert(details);
   }
 
   /**
@@ -205,6 +289,9 @@ export class BuildModeController {
         id: component.id,
         name: component.name,
         type: component.type,
+        description: component.description,
+        capabilities: component.capabilities,
+        usage: component.usage,
         ports: component.ports,
         stateMachine: {
           initialState: component.stateMachine.initialState,
@@ -286,8 +373,11 @@ export class BuildModeController {
         costModel: componentData.costModel,
         parentId: componentData.parentId,
         graphScope: componentData.graphScope,
+        description: componentData.description,
+        capabilities: componentData.capabilities,
+        usage: componentData.usage,
         title: componentData.metadata?.title,
-        description: componentData.metadata?.description,
+        metadataDescription: componentData.metadata?.description,
         metadata: componentData.metadata?.metadata
       });
 
@@ -316,7 +406,7 @@ export class BuildModeController {
       this.dataBusManager.createDataBus(bus.id, bus.type || bus.busType, bus.bandwidth);
     });
 
-    this.renderer.render();
+    this.canvas.render();
     this.canvas.showWelcomePrompt();
 
     this.eventBus.emit({

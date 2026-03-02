@@ -112,6 +112,22 @@ export class ComponentConfigPanel {
           <label>Description</label>
           <textarea class="config-description">${component.metadata.description}</textarea>
         </div>
+        <div class="config-field">
+          <label>Metadata (JSON)</label>
+          <textarea class="config-metadata">${JSON.stringify(component.metadata.metadata || {}, null, 2)}</textarea>
+        </div>
+      </div>
+
+      <div class="config-section">
+        <h4>Component Details</h4>
+        <div class="config-field">
+          <label>Capabilities</label>
+          <textarea disabled>${(component.capabilities || []).join(', ')}</textarea>
+        </div>
+        <div class="config-field">
+          <label>Usage</label>
+          <textarea disabled>${component.usage || ''}</textarea>
+        </div>
       </div>
 
       <div class="config-section">
@@ -142,11 +158,25 @@ export class ComponentConfigPanel {
     const nameInput = this.contentElement.querySelector('.config-name');
     const titleInput = this.contentElement.querySelector('.config-title');
     const descInput = this.contentElement.querySelector('.config-description');
+    const metadataInput = this.contentElement.querySelector('.config-metadata');
 
     saveBtn.addEventListener('click', () => {
+      let metadata = {};
+      try {
+        metadata = metadataInput.value.trim() ? JSON.parse(metadataInput.value) : {};
+        if (typeof metadata !== 'object' || Array.isArray(metadata)) {
+          alert('Metadata must be a JSON object');
+          return;
+        }
+      } catch (error) {
+        alert(`Invalid metadata JSON: ${error.message}`);
+        return;
+      }
+
       this.currentComponent.name = nameInput.value;
       this.currentComponent.metadata.title = titleInput.value;
       this.currentComponent.metadata.description = descInput.value;
+      this.currentComponent.metadata.metadata = metadata;
 
       this.eventBus.emit({
         urn: 'ui://config-panel',
@@ -156,7 +186,8 @@ export class ComponentConfigPanel {
           componentId: this.currentComponent.id,
           name: this.currentComponent.name,
           title: this.currentComponent.metadata.title,
-          description: this.currentComponent.metadata.description
+          description: this.currentComponent.metadata.description,
+          metadata: this.currentComponent.metadata.metadata
         }
       });
     });

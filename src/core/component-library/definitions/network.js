@@ -1,6 +1,8 @@
 export const networkDefinition = {
   name: 'Network',
   description: 'Network component',
+  capabilities: ['routeRequest', 'forwardResponse', 'applyPolicy'],
+  usage: 'Use for ingress/egress traffic flow, routing, and protocol boundary transitions.',
   category: 'Network',
   type: 'network',
   ports: {

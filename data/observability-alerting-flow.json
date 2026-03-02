@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "exportedAt": "2026-03-02T00:00:00.000Z",
+  "graph": {
+    "id": "observability-alerting-flow",
+    "name": "Observability Alerting Flow",
+    "annotations": {
+      "title": "Observability + Alerting",
+      "description": "Telemetry collection, analysis, storage, and alert fanout.",
+      "metadata": {
+        "domain": "operations",
+        "pattern": "monitoring"
+      }
+    }
+  },
+  "components": [
+    {"id": "net-collector", "name": "Telemetry Collector", "type": "network", "metadata": {"title": "Collector", "description": "Accepts telemetry", "metadata": {"role": "ingest"}}},
+    {"id": "msg-metrics-bus", "name": "Metrics Bus", "type": "messaging", "metadata": {"title": "Metrics Bus", "description": "Metrics/event stream", "metadata": {"role": "transport"}}},
+    {"id": "compute-detector", "name": "Anomaly Detector", "type": "compute", "metadata": {"title": "Anomaly Detector", "description": "Detects issues", "metadata": {"role": "analysis"}}},
+    {"id": "db-metrics", "name": "Metrics Store", "type": "database", "metadata": {"title": "Metrics Store", "description": "Time-series storage", "metadata": {"role": "storage"}}},
+    {"id": "compute-notifier", "name": "Alert Notifier", "type": "compute", "metadata": {"title": "Alert Notifier", "description": "Formats alerts", "metadata": {"role": "notification"}}},
+    {"id": "msg-alerts", "name": "Alerts Topic", "type": "messaging", "metadata": {"title": "Alerts Topic", "description": "Downstream alert channel", "metadata": {"role": "fanout"}}}
+  ],
+  "connections": [
+    {"id": "c1", "source": "net-collector", "target": "msg-metrics-bus", "channel": "ingest"},
+    {"id": "c2", "source": "msg-metrics-bus", "target": "compute-detector", "channel": "analyze"},
+    {"id": "c3", "source": "compute-detector", "target": "db-metrics", "channel": "store"},
+    {"id": "c4", "source": "compute-detector", "target": "compute-notifier", "channel": "incident"},
+    {"id": "c5", "source": "compute-notifier", "target": "msg-alerts", "channel": "publish-alert"}
+  ],
+  "dataBuses": [
+    {"id": "dbus-c1", "type": "one-to-one", "bandwidth": 2600},
+    {"id": "dbus-c2", "type": "one-to-one", "bandwidth": 1800},
+    {"id": "dbus-c3", "type": "one-to-one", "bandwidth": 1700},
+    {"id": "dbus-c4", "type": "one-to-one", "bandwidth": 1200},
+    {"id": "dbus-c5", "type": "one-to-many", "bandwidth": 1200}
+  ]
+}

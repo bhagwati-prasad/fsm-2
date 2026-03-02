@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "exportedAt": "2026-03-02T00:00:00.000Z",
+  "graph": {
+    "id": "resilient-api-with-cache-queue",
+    "name": "Resilient API Pattern",
+    "annotations": {
+      "title": "Resilient API with Queue",
+      "description": "Synchronous path with async fallback and durability.",
+      "metadata": {
+        "domain": "platform",
+        "focus": "resilience"
+      }
+    }
+  },
+  "components": [
+    {"id": "net-public-gw", "name": "Public Gateway", "type": "network", "metadata": {"title": "Public Gateway", "description": "North-south edge", "metadata": {"layer": "edge"}}},
+    {"id": "compute-api-core", "name": "Core API", "type": "compute", "metadata": {"title": "Core API", "description": "Main service", "metadata": {"layer": "service"}}},
+    {"id": "database-cache", "name": "Cache Store", "type": "database", "metadata": {"title": "Cache Store", "description": "Fast read path", "metadata": {"layer": "cache"}}},
+    {"id": "database-primary", "name": "Primary Store", "type": "database", "metadata": {"title": "Primary Store", "description": "Durable writes", "metadata": {"layer": "data"}}},
+    {"id": "messaging-retry", "name": "Retry Queue", "type": "messaging", "metadata": {"title": "Retry Queue", "description": "Async retry pipeline", "metadata": {"layer": "async"}}},
+    {"id": "compute-retry-worker", "name": "Retry Worker", "type": "compute", "metadata": {"title": "Retry Worker", "description": "Reprocess failed work", "metadata": {"layer": "worker"}}}
+  ],
+  "connections": [
+    {"id": "c1", "source": "net-public-gw", "target": "compute-api-core", "channel": "request"},
+    {"id": "c2", "source": "compute-api-core", "target": "database-cache", "channel": "cache-read"},
+    {"id": "c3", "source": "compute-api-core", "target": "database-primary", "channel": "write"},
+    {"id": "c4", "source": "compute-api-core", "target": "messaging-retry", "channel": "enqueue-on-fail"},
+    {"id": "c5", "source": "messaging-retry", "target": "compute-retry-worker", "channel": "retry"},
+    {"id": "c6", "source": "compute-retry-worker", "target": "database-primary", "channel": "reconcile"}
+  ],
+  "dataBuses": [
+    {"id": "dbus-c1", "type": "one-to-one", "bandwidth": 2400},
+    {"id": "dbus-c2", "type": "one-to-one", "bandwidth": 2000},
+    {"id": "dbus-c3", "type": "one-to-one", "bandwidth": 2000},
+    {"id": "dbus-c4", "type": "one-to-one", "bandwidth": 1100},
+    {"id": "dbus-c5", "type": "one-to-one", "bandwidth": 1100},
+    {"id": "dbus-c6", "type": "one-to-one", "bandwidth": 1300}
+  ]
+}

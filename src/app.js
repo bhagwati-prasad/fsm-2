@@ -15,7 +15,7 @@ import {
   LocalStorageDriver,
   SessionStorageDriver,
   IndexDBDriver
-} from '@/index.js';
+} from './index.js';
 
 class FSMTool {
   constructor() {
@@ -39,6 +39,7 @@ class FSMTool {
 
   init() {
     this.setupEventListeners();
+    this.setupCoreEventWiring();
     this.loadSavedState();
     this.switchMode('build');
   }
@@ -52,7 +53,34 @@ class FSMTool {
     });
   }
 
+  setupCoreEventWiring() {
+    this.eventBus.subscribe('ui:mode-switch-requested', (event) => {
+      const targetMode = event.payload?.targetMode;
+      if (targetMode) {
+        this.switchMode(targetMode);
+      }
+    });
+
+    this.eventBus.subscribe('ui:simulation-start-requested', (event) => {
+      if (this.currentMode !== 'simulation') {
+        this.switchMode('simulation');
+      }
+
+      if (!this.simulationController) {
+        return;
+      }
+
+      const providedInputs = event.payload?.inputs;
+      this.simulationController.start(providedInputs);
+    });
+  }
+
   switchMode(mode) {
+    document.querySelectorAll('.nav-btn').forEach((btn) => {
+      const buttonMode = btn.getAttribute('data-mode');
+      btn.classList.toggle('active', buttonMode === mode);
+    });
+
     // Hide all modes
     document.querySelectorAll('.mode-container').forEach((container) => {
       container.style.display = 'none';
@@ -61,7 +89,7 @@ class FSMTool {
     // Show selected mode
     const modeElement = document.getElementById(`${mode}-mode`);
     if (modeElement) {
-      modeElement.style.display = 'block';
+      modeElement.style.display = 'inherit';
     }
 
     this.currentMode = mode;

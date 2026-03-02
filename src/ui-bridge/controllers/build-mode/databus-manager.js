@@ -127,13 +127,13 @@ export class DataBusManager {
    * @param {string} type - DataBus type
    * @param {number} bandwidth - Bandwidth limit
    */
-  createDataBus(id, type, bandwidth) {
+  createDataBus(id, type, bandwidth, source = [], target = []) {
     const dataBus = new DataBus({
       id,
       type,
       bandwidth,
-      source: [],
-      target: []
+      source,
+      target
     });
 
     this.dataBuses.set(id, dataBus);
@@ -149,6 +149,19 @@ export class DataBusManager {
         bandwidth
       }
     });
+  }
+
+  createDefaultDataBusesForComponent(componentId) {
+    const inboundId = `${componentId}-in`;
+    const outboundId = `${componentId}-out`;
+
+    if (!this.dataBuses.has(inboundId)) {
+      this.createDataBus(inboundId, 'one-to-one', null, [], [componentId]);
+    }
+
+    if (!this.dataBuses.has(outboundId)) {
+      this.createDataBus(outboundId, 'one-to-one', null, [componentId], []);
+    }
   }
 
   /**

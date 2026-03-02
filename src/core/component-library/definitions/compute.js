@@ -1,6 +1,8 @@
 export const computeDefinition = {
   name: 'Compute',
   description: 'Compute component',
+  capabilities: ['processData', 'transformPayload', 'runBusinessLogic'],
+  usage: 'Use for stateless compute steps that transform input data into output results.',
   category: 'Compute',
   type: 'compute',
   ports: {

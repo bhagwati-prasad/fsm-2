@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0.0",
+  "exportedAt": "2026-03-02T00:00:00.000Z",
+  "graph": {
+    "id": "etl-analytics-pipeline",
+    "name": "ETL Analytics Pipeline",
+    "annotations": {
+      "title": "ETL Pipeline",
+      "description": "Extract, transform, load architecture for analytics.",
+      "metadata": {
+        "domain": "data",
+        "cadence": "batch"
+      }
+    }
+  },
+  "components": [
+    {"id": "net-source-api", "name": "Source API", "type": "network", "metadata": {"title": "Source API", "description": "External data source", "metadata": {"stage": "extract"}}},
+    {"id": "compute-extractor", "name": "Extractor", "type": "compute", "metadata": {"title": "Extractor", "description": "Pulls source data", "metadata": {"stage": "extract"}}},
+    {"id": "msg-raw-stream", "name": "Raw Stream", "type": "messaging", "metadata": {"title": "Raw Stream", "description": "Raw event transport", "metadata": {"stage": "buffer"}}},
+    {"id": "compute-transformer", "name": "Transformer", "type": "compute", "metadata": {"title": "Transformer", "description": "Normalizes/enriches records", "metadata": {"stage": "transform"}}},
+    {"id": "compute-validator", "name": "Validator", "type": "compute", "metadata": {"title": "Validator", "description": "Validates quality rules", "metadata": {"stage": "transform"}}},
+    {"id": "db-warehouse", "name": "Data Warehouse", "type": "database", "metadata": {"title": "Warehouse", "description": "Analytics storage", "metadata": {"stage": "load"}}}
+  ],
+  "connections": [
+    {"id": "c1", "source": "net-source-api", "target": "compute-extractor", "channel": "pull"},
+    {"id": "c2", "source": "compute-extractor", "target": "msg-raw-stream", "channel": "publish-raw"},
+    {"id": "c3", "source": "msg-raw-stream", "target": "compute-transformer", "channel": "consume-raw"},
+    {"id": "c4", "source": "compute-transformer", "target": "compute-validator", "channel": "normalized"},
+    {"id": "c5", "source": "compute-validator", "target": "db-warehouse", "channel": "load"}
+  ],
+  "dataBuses": [
+    {"id": "dbus-c1", "type": "one-to-one", "bandwidth": 1200},
+    {"id": "dbus-c2", "type": "one-to-one", "bandwidth": 1600},
+    {"id": "dbus-c3", "type": "one-to-one", "bandwidth": 1600},
+    {"id": "dbus-c4", "type": "one-to-one", "bandwidth": 1400},
+    {"id": "dbus-c5", "type": "one-to-one", "bandwidth": 1400}
+  ]
+}

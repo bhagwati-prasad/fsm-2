@@ -197,6 +197,7 @@ export class SimulationEngine {
 
     this.state.status = 'stopped';
     this.state.endTime = new Date().toISOString();
+    this.state.currentFrame = 0;
 
     // Emit stop event
     this.eventBus.emit({
@@ -204,9 +205,20 @@ export class SimulationEngine {
       type: 'system:simulation-stop',
       timestamp: new Date().toISOString(),
       payload: {
+          currentFrame: this.state.currentFrame,
         totalFrames: this.state.totalFrames,
         totalCost: this.state.totalCost,
         errorCount: this.state.errors.length
+      }
+    });
+
+    this.eventBus.emit({
+      urn: 'system://simulation-engine',
+      type: 'system:frame-scrub',
+      timestamp: new Date().toISOString(),
+      payload: {
+        currentFrame: this.state.currentFrame,
+        targetFrame: this.state.currentFrame
       }
     });
 

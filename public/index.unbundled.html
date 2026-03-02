@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud-Native Architecture FSM Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <h1>Cloud-Native Architecture FSM Tool</h1>
+      <nav class="app-nav">
+        <button class="nav-btn" data-mode="build">Build Mode</button>
+        <button class="nav-btn" data-mode="simulation">Simulation Mode</button>
+        <button class="nav-btn" data-mode="analyze">Analyze Mode</button>
+      </nav>
+    </header>
+
+    <main class="app-main">
+      <div id="build-mode" class="mode-container">
+        <div class="sidebar palette-sidebar"></div>
+        <div class="canvas-area"></div>
+        <div class="config-panel"></div>
+      </div>
+
+      <div id="simulation-mode" class="mode-container" style="display: none;">
+        <div class="input-area"></div>
+        <div class="playback-area"></div>
+        <div class="canvas-area"></div>
+        <div class="timeline-area"></div>
+        <div class="event-log-area"></div>
+      </div>
+
+      <div id="analyze-mode" class="mode-container" style="display: none;">
+        <div class="analyze-container"></div>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <p>Cloud-Native Architecture FSM Tool v1.0.0</p>
+      <p>© 2026 Cloud-Native Team</p>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>

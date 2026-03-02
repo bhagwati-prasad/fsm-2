@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0.0",
+  "exportedAt": "2026-03-02T00:00:00.000Z",
+  "graph": {
+    "id": "three-tier-webapp",
+    "name": "Three Tier Web App",
+    "annotations": {
+      "title": "Three Tier Web Architecture",
+      "description": "Classic request -> app -> data path with async audit stream.",
+      "metadata": {
+        "domain": "web",
+        "environment": "sample"
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "net-gateway",
+      "name": "Gateway",
+      "type": "network",
+      "description": "Ingress network edge",
+      "capabilities": ["routeRequest", "forwardResponse", "applyPolicy"],
+      "usage": "Receives external requests and routes to compute tier.",
+      "metadata": {
+        "title": "Gateway",
+        "description": "Entry point",
+        "metadata": {"tier": "edge"}
+      }
+    },
+    {
+      "id": "compute-api",
+      "name": "API Service",
+      "type": "compute",
+      "description": "Application service",
+      "capabilities": ["processData", "transformPayload", "runBusinessLogic"],
+      "usage": "Processes requests and orchestrates persistence/events.",
+      "metadata": {
+        "title": "API Service",
+        "description": "Business logic",
+        "metadata": {"tier": "app"}
+      }
+    },
+    {
+      "id": "db-main",
+      "name": "Primary DB",
+      "type": "database",
+      "description": "Primary transactional storage",
+      "capabilities": ["read", "write", "query", "indexLookup"],
+      "usage": "Stores application records.",
+      "metadata": {
+        "title": "Primary DB",
+        "description": "System of record",
+        "metadata": {"tier": "data"}
+      }
+    },
+    {
+      "id": "msg-audit",
+      "name": "Audit Queue",
+      "type": "messaging",
+      "description": "Audit trail transport",
+      "capabilities": ["enqueue", "dequeue", "acknowledge", "publishSubscribe"],
+      "usage": "Receives audit events for downstream processing.",
+      "metadata": {
+        "title": "Audit Queue",
+        "description": "Async audit channel",
+        "metadata": {"tier": "integration"}
+      }
+    }
+  ],
+  "connections": [
+    {"id": "c1", "source": "net-gateway", "target": "compute-api", "channel": "request"},
+    {"id": "c2", "source": "compute-api", "target": "db-main", "channel": "write"},
+    {"id": "c3", "source": "compute-api", "target": "msg-audit", "channel": "audit"}
+  ],
+  "dataBuses": [
+    {"id": "dbus-c1", "type": "one-to-one", "bandwidth": 2000},
+    {"id": "dbus-c2", "type": "one-to-one", "bandwidth": 1500},
+    {"id": "dbus-c3", "type": "one-to-one", "bandwidth": 1000}
+  ]
+}

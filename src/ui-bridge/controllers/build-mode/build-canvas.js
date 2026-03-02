@@ -29,8 +29,36 @@ export class BuildCanvas {
    */
   init() {
     this.createCanvasUI();
+    this.ensureRendererReady();
     this.setupEventListeners();
     this.showWelcomePrompt();
+  }
+
+  ensureRendererReady() {
+    if (!this.renderer) {
+      return;
+    }
+
+    const isAlreadyBound = this.renderer.container === this.contentElement;
+    if (isAlreadyBound) {
+      return;
+    }
+
+    if (typeof this.renderer.destroy === 'function') {
+      try {
+        this.renderer.destroy();
+      } catch (error) {
+        this.logger.warn('Renderer destroy failed during rebind', error);
+      }
+    }
+
+    this.contentElement.innerHTML = '';
+    this.renderer.init(this.contentElement, this.graph, this.eventBus);
+  }
+
+  render() {
+    this.ensureRendererReady();
+    this.renderer.render();
   }
 
   /**
@@ -141,7 +169,7 @@ export class BuildCanvas {
    */
   addComponent(component, x, y) {
     this.graph.addComponent(component);
-    this.renderer.render();
+    this.render();
     this.showWelcomePrompt();
 
     this.eventBus.emit({
@@ -163,7 +191,7 @@ export class BuildCanvas {
    */
   removeComponent(componentId) {
     this.graph.removeComponent(componentId);
-    this.renderer.render();
+    this.render();
     this.showWelcomePrompt();
 
     this.eventBus.emit({
@@ -178,6 +206,7 @@ export class BuildCanvas {
    * Clear canvas
    */
   clear() {
+    this.ensureRendererReady();
     this.graph.getComponents().forEach((component) => {
       this.graph.removeComponent(component.id);
     });

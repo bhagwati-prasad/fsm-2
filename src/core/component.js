@@ -24,6 +24,9 @@ export class Component {
     this.id = config.id;
     this.name = config.name;
     this.type = config.type;
+    this.description = config.description || '';
+    this.capabilities = config.capabilities || [];
+    this.usage = config.usage || '';
     this.ports = config.ports || { input: [], output: [] };
     this.config = config.config || {};
     this.costModel = config.costModel || {};
@@ -52,7 +55,7 @@ export class Component {
     // Metadata
     this.metadata = {
       title: config.title || this.name,
-      description: config.description || '',
+      description: config.metadataDescription || config.description || '',
       metadata: config.metadata || {}
     };
 
@@ -323,6 +326,14 @@ export class Component {
     return {
       id: this.id,
       urn: this.urn,
+      name: this.name,
+      type: this.type,
+      description: this.description,
+      capabilities: this.capabilities,
+      usage: this.usage,
+      title: this.metadata.title,
+      metadataDescription: this.metadata.description,
+      metadata: this.metadata.metadata,
       currentState: this.state.currentState,
       lastStateChange: this.state.lastStateChange,
       receivedInputs: Object.fromEntries(this.receivedInputs),
@@ -337,6 +348,28 @@ export class Component {
    * @param {Object} snapshot - State snapshot
    */
   restoreStateSnapshot(snapshot) {
+    if (snapshot.name) {
+      this.name = snapshot.name;
+    }
+    if (snapshot.description !== undefined) {
+      this.description = snapshot.description;
+    }
+    if (Array.isArray(snapshot.capabilities)) {
+      this.capabilities = snapshot.capabilities;
+    }
+    if (snapshot.usage !== undefined) {
+      this.usage = snapshot.usage;
+    }
+    if (snapshot.title !== undefined) {
+      this.metadata.title = snapshot.title;
+    }
+    if (snapshot.metadataDescription !== undefined) {
+      this.metadata.description = snapshot.metadataDescription;
+    }
+    if (snapshot.metadata !== undefined) {
+      this.metadata.metadata = snapshot.metadata;
+    }
+
     this.state.currentState = snapshot.currentState;
     this.state.lastStateChange = snapshot.lastStateChange;
     this.isExecuting = snapshot.isExecuting;

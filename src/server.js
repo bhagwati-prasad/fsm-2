@@ -5,6 +5,7 @@
 
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const compression = require('compression');
 const WebSocket = require('ws');
 const http = require('http');
@@ -12,10 +13,63 @@ const http = require('http');
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+const SRC_ROOT = path.join(__dirname, '../src');
+const UNBUNDLED_MODE = process.env.UNBUNDLED === 'true';
+
+function resolveSourceModule(modulePath) {
+  const normalizedRequest = path.normalize(modulePath).replace(/^([/\\])+/, '');
+  const basePath = path.join(SRC_ROOT, normalizedRequest);
+  const indexPath = path.join(basePath, 'index.js');
+  const candidates = [
+    { path: basePath, isDirectoryIndex: false },
+    { path: `${basePath}.js`, isDirectoryIndex: false },
+    { path: indexPath, isDirectoryIndex: true }
+  ];
+
+  for (const candidate of candidates) {
+    const normalizedCandidate = path.normalize(candidate.path);
+    if (!normalizedCandidate.startsWith(SRC_ROOT)) {
+      continue;
+    }
+
+    if (fs.existsSync(normalizedCandidate) && fs.statSync(normalizedCandidate).isFile()) {
+      return {
+        filePath: normalizedCandidate,
+        normalizedRequest,
+        isDirectoryIndex: candidate.isDirectoryIndex
+      };
+    }
+  }
+
+  return null;
+}
 
 // Middleware
 app.use(compression());
 app.use(express.json());
+
+if (UNBUNDLED_MODE) {
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.unbundled.html'));
+  });
+
+  app.get('/src/*', (req, res, next) => {
+    const requestedModule = req.params[0] || '';
+    const resolvedModule = resolveSourceModule(requestedModule);
+
+    if (!resolvedModule) {
+      return next();
+    }
+
+    if (resolvedModule.isDirectoryIndex) {
+      return res.redirect(`/src/${resolvedModule.normalizedRequest}/index.js`);
+    }
+
+    res.type('application/javascript');
+    return res.sendFile(resolvedModule.filePath);
+  });
+}
+
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, '../dist')));
 
