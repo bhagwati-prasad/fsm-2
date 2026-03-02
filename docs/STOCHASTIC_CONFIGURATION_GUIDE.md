@@ -72,19 +72,22 @@ const value = stochastic.generateValue('database-1', 'executionTime');
 
 ### Execute Multiple Simulations
 ```javascript
-const manager = new MultipleRunManager();
-const results = await manager.executeMultipleRuns(100, initialInputs);
+const manager = new MultipleRunManager(engine, stochastic, eventBus, {
+  resetAfterSingleRun: true,
+  pollIntervalMs: 100
+});
+const runResult = await manager.executeMultipleRuns(100, initialInputs);
 ```
 
 ### Analyze Results
 ```javascript
 const analysis = new StatisticalAnalysis();
-const stats = analysis.analyze(results);
+const stats = analysis.analyze(runResult.runs);
 
-console.log('Mean:', stats.mean);
-console.log('Median:', stats.median);
-console.log('Variance:', stats.variance);
-console.log('Confidence Interval:', stats.confidenceInterval);
+console.log('Cost Mean:', stats.summary.cost.mean);
+console.log('Cost Median:', stats.summary.cost.median);
+console.log('Cost Variance:', stats.variance.cost);
+console.log('Cost 95% CI:', stats.confidence.cost);
 ```
 
 ## Use Cases

@@ -100,4 +100,4 @@ Root > API Gateway > Load Balancer
 
 ## API
 
-See `docs/UI_COMPONENTS_REFERENCE.md` for detailed API documentation.
+See `docs/API_REFERENCE.md` for detailed API documentation.

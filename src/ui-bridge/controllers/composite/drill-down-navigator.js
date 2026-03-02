@@ -3,7 +3,7 @@
  * Handles navigation into composite components
  */
 
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class DrillDownNavigator {
   /**

@@ -3,7 +3,7 @@
  * Displays simulation events
  */
 
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class EventLogViewer {
   /**

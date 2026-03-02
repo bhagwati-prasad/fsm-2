@@ -3,7 +3,7 @@
  * Displays simulation timeline and frame scrubbing
  */
 
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class TimelineVisualization {
   /**

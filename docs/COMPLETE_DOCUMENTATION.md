@@ -71,7 +71,7 @@ UIBridge (Abstract renderer)
 ├── CanvasRenderer (Canvas-based)
 BuildModeController
 SimulationModeController
-AnalyzeMode
+Analyze modules (LogParser, LogReplay, Metrics, BottleneckDetector, ReportGenerator)
 StochasticConfigUI
 ```
 
@@ -150,7 +150,7 @@ Initial Input → SimulationEngine → Executor → Components → EventBus → 
 
 ### Analyze Mode
 ```
-Logs → LogParser → Analyzer → Metrics → ReportGenerator → UIBridge
+Logs → LogParser → LogReplay → Metrics → BottleneckDetector → ReportGenerator
 ```
 
 ## Storage Strategy
@@ -190,7 +190,6 @@ Logs → LogParser → Analyzer → Metrics → ReportGenerator → UIBridge
 ### Test Coverage
 - Unit Tests: 75+ test cases
 - Integration Tests: Component workflows
-- E2E Tests: Complete user scenarios
 - Coverage: 70%+ of codebase
 
 ### Test Categories
@@ -357,19 +356,19 @@ npm start
 
 For detailed information on specific subsystems, see:
 
-- **Build Mode**: `docs/BUILD_MODE_GUIDE.md`
+- **Build Mode**: `docs/APP_LAYOUT_GUIDE.md`
 - **Simulation Mode**: `docs/SIMULATION_MODE_GUIDE.md`
 - **Analyze Mode**: `docs/ANALYZE_MODE_GUIDE.md`
 - **Composite Components**: `docs/COMPOSITE_COMPONENTS_GUIDE.md`
 - **Stochastic Configuration**: `docs/STOCHASTIC_CONFIGURATION_GUIDE.md`
-- **UI Components API**: `docs/UI_COMPONENTS_REFERENCE.md`
-- **Codebase Analysis**: `docs/CODEBASE_DOCUMENTATION_ANALYSIS.md`
+- **UI Components API**: `docs/API_REFERENCE.md`
+- **Codebase Analysis**: `docs/architecture.md`
 
 ## Support
 
 For issues, questions, or contributions:
-- GitHub Issues: [project-repo]/issues
-- Documentation: [project-docs]
+- GitHub Issues: https://github.com/bhagwati-prasad/fsm-2/issues
+- Documentation: docs/README.md
 - Email: support@example.com
 
 ## License

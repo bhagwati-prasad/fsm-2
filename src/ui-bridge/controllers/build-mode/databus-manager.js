@@ -3,8 +3,8 @@
  * Manages DataBus creation and configuration
  */
 
-import { Logger } from '../../utils/logger';
-import { DataBus } from '../../core/databus';
+import { Logger } from '../../../utils/logger';
+import { DataBus } from '../../../core/databus';
 
 export class DataBusManager {
   /**

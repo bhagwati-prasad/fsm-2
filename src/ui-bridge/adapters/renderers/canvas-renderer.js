@@ -3,8 +3,8 @@
  * Fallback renderer using HTML5 Canvas for large graphs
  */
 
-import { UIBridge } from '../ui-bridge';
-import { Logger } from '../../utils/logger';
+import { UIBridge } from '../../ui-bridge';
+import { Logger } from '../../../utils/logger';
 
 export class CanvasRenderer extends UIBridge {
   /**

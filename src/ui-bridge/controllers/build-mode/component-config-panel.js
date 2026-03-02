@@ -3,7 +3,7 @@
  * Displays and manages component configuration
  */
 
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class ComponentConfigPanel {
   /**

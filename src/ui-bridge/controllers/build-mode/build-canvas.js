@@ -3,7 +3,7 @@
  * Main canvas for building diagrams
  */
 
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class BuildCanvas {
   /**

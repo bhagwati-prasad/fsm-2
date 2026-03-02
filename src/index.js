@@ -10,6 +10,8 @@ export { EventBus } from './core/event-bus';
 export { DataBus } from './core/databus';
 export { StateMachine } from './core/state-machine';
 export { CompositeComponent } from './core/composite-component';
+export { ComponentLibrary } from './core/component-library';
+export { CompositeLibrary } from './core/composite-library';
 
 // Simulation
 export { SimulationEngine } from './simulation/engine';
@@ -29,33 +31,31 @@ export { Serializer } from './storage/serializer';
 
 // UI Bridge
 export { UIBridge } from './ui-bridge/ui-bridge';
-export { D3Renderer } from './ui-bridge/renderers/d3-renderer';
-export { CanvasRenderer } from './ui-bridge/renderers/canvas-renderer';
+export { D3Renderer } from './ui-bridge/adapters/renderers/d3-renderer';
+export { CanvasRenderer } from './ui-bridge/adapters/renderers/canvas-renderer';
 export { DragDropHandler } from './ui-bridge/interactions/drag-drop';
 export { SnapAttachHandler } from './ui-bridge/interactions/snap-attach';
 export { StateAnimator } from './ui-bridge/animations/state-animator';
 export { DataBusAnimator } from './ui-bridge/animations/databus-animator';
 
 // Build Mode
-export { ComponentPalette } from './ui-bridge/build-mode/component-palette';
-export { BuildCanvas } from './ui-bridge/build-mode/build-canvas';
-export { ComponentConfigPanel } from './ui-bridge/build-mode/component-config-panel';
-export { DataBusManager } from './ui-bridge/build-mode/databus-manager';
-export { BuildModeController } from './ui-bridge/build-mode/build-mode-controller';
-export { ComponentLibrary } from './ui-bridge/build-mode/component-library';
+export { ComponentPalette } from './ui-bridge/controllers/build-mode/component-palette';
+export { BuildCanvas } from './ui-bridge/controllers/build-mode/build-canvas';
+export { ComponentConfigPanel } from './ui-bridge/controllers/build-mode/component-config-panel';
+export { DataBusManager } from './ui-bridge/controllers/build-mode/databus-manager';
+export { BuildModeController } from './ui-bridge/controllers/build-mode/build-mode-controller';
 
 // Simulation Mode
-export { InputForm } from './ui-bridge/simulation-mode/input-form';
-export { PlaybackControls } from './ui-bridge/simulation-mode/playback-controls';
-export { TimelineVisualization } from './ui-bridge/simulation-mode/timeline-visualization';
-export { EventLogViewer } from './ui-bridge/simulation-mode/event-log-viewer';
-export { SimulationModeController } from './ui-bridge/simulation-mode/simulation-mode-controller';
+export { InputForm } from './ui-bridge/controllers/simulation-mode/input-form';
+export { PlaybackControls } from './ui-bridge/controllers/simulation-mode/playback-controls';
+export { TimelineVisualization } from './ui-bridge/controllers/simulation-mode/timeline-visualization';
+export { EventLogViewer } from './ui-bridge/controllers/simulation-mode/event-log-viewer';
+export { SimulationModeController } from './ui-bridge/controllers/simulation-mode/simulation-mode-controller';
 
 // Composite
-export { CompositeRenderer } from './ui-bridge/composite/composite-renderer';
-export { DrillDownNavigator } from './ui-bridge/composite/drill-down-navigator';
-export { CompositeLibrary } from './ui-bridge/composite/composite-library';
-export { CompositeConfigPanel } from './ui-bridge/composite/composite-config-panel';
+export { CompositeRenderer } from './ui-bridge/controllers/composite/composite-renderer';
+export { DrillDownNavigator } from './ui-bridge/controllers/composite/drill-down-navigator';
+export { CompositeConfigPanel } from './ui-bridge/controllers/composite/composite-config-panel';
 
 // Analyze
 export { LogParser } from './analyze/log-parser';

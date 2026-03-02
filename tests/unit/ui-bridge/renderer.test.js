@@ -3,8 +3,8 @@
  */
 
 import { UIBridge } from '../../../src/ui-bridge/ui-bridge';
-import { D3Renderer } from '../../../src/ui-bridge/renderers/d3-renderer';
-import { CanvasRenderer } from '../../../src/ui-bridge/renderers/canvas-renderer';
+import { D3Renderer } from '../../../src/ui-bridge/adapters/renderers/d3-renderer';
+import { CanvasRenderer } from '../../../src/ui-bridge/adapters/renderers/canvas-renderer';
 import { Graph } from '../../../src/core/graph';
 import { Component } from '../../../src/core/component';
 import { EventBus } from '../../../src/core/event-bus';

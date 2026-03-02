@@ -20,11 +20,13 @@ src/
 ├── core/                 # Core component model and graph engine
 ├── simulation/           # Simulation execution and playback
 ├── storage/              # Multi-driver persistence layer
-├── ui-bridge/            # Renderer abstraction and UI components
-│   ├── build-mode/       # Build mode UI components
-│   ├── simulation-mode/  # Simulation mode UI components
-│   ├── composite/        # Composite component UI
-│   ├── renderers/        # Renderer implementations
+├── ui-bridge/            # UI adapters exposing core to renderers
+│   ├── adapters/         # Renderer adapters and event mappers
+│   │   └── renderers/    # Renderer adapter entry points
+│   ├── controllers/      # UI flow controllers by mode
+│   │   ├── build-mode/
+│   │   ├── simulation-mode/
+│   │   └── composite/
 │   ├── interactions/     # Interaction handlers
 │   ├── animations/       # Animation utilities
 │   └── stochastic/       # Stochastic configuration UI
@@ -34,11 +36,9 @@ src/
 
 tests/
 ├── unit/                 # Unit tests
-├── integration/          # Integration tests
-└── e2e/                  # End-to-end tests
+└── integration/          # Integration tests
 
 docs/                     # Documentation
-examples/                # Example diagrams and configurations
 ```
 
 ## Getting Started
@@ -53,7 +53,7 @@ npm install
 
 ```bash
 # Start development server
-npm start
+npm run dev
 
 # Run tests
 npm test
@@ -69,6 +69,9 @@ npm run lint
 
 # Format code
 npm run format
+
+# Refresh component/composite definition indexes
+npm run library:refresh-indexes
 ```
 
 ### Build
@@ -115,7 +118,6 @@ Examples:
 
 - **Unit Tests**: Component lifecycle, state machines, graph operations
 - **Integration Tests**: Build mode, simulation mode, analyze mode workflows
-- **E2E Tests**: Complete user workflows and 7-component test scenario
 - **Performance Tests**: Rendering, event system, simulation execution
 
 ## Documentation
@@ -124,14 +126,8 @@ See `docs/` directory for:
 - Architecture documentation
 - API reference
 - Component guide
-- Usage examples
-
-## Examples
-
-See `examples/` directory for:
-- 7-component cloud architecture scenario
-- Simple pipeline example
-- Composite component example
+- Mode-specific guides
+- Architecture Decision Records (ADRs): `docs/adr/`
 
 ## License
 

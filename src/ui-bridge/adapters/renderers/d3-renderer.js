@@ -3,8 +3,8 @@
  * Renders graph using D3.js with force-directed layout
  */
 
-import { UIBridge } from '../ui-bridge';
-import { Logger } from '../../utils/logger';
+import { UIBridge } from '../../ui-bridge';
+import { Logger } from '../../../utils/logger';
 
 export class D3Renderer extends UIBridge {
   /**

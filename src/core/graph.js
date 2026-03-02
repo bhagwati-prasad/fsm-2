@@ -13,9 +13,30 @@ export class Graph {
   constructor(config = {}) {
     this.id = config.id || 'root';
     this.name = config.name || 'Untitled Graph';
+    this.annotations = {
+      title: config.annotations?.title || '',
+      description: config.annotations?.description || '',
+      metadata: config.annotations?.metadata || {}
+    };
     this.components = new Map();
     this.connections = new Map();
     this.adjacencyList = new Map();
+  }
+
+  setAnnotations(annotations = {}) {
+    this.annotations = {
+      title: annotations.title || '',
+      description: annotations.description || '',
+      metadata: annotations.metadata || {}
+    };
+  }
+
+  getAnnotations() {
+    return {
+      title: this.annotations.title,
+      description: this.annotations.description,
+      metadata: { ...this.annotations.metadata }
+    };
   }
 
   /**

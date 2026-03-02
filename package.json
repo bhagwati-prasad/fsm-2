@@ -13,7 +13,8 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint src/",
     "format": "prettier --write src/",
-    "docs": "jsdoc -c jsdoc.json"
+    "docs": "jsdoc -c jsdoc.json",
+    "library:refresh-indexes": "node scripts/generate-library-indexes.js"
   },
   "keywords": [
     "cloud-native",

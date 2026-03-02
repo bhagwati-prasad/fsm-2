@@ -15,6 +15,8 @@ The foundation of the system, providing fundamental abstractions:
 - **Graph**: Graph engine for managing component relationships and execution order
 - **EventBus**: Global event system with namespacing, filtering, and bubbling
 - **StateMachine**: State machine implementation for component state transitions
+- **ComponentLibrary**: Component definitions, catalog, and instantiation/factory behavior
+- **CompositeLibrary**: Pre-built composite definitions and instantiation/factory behavior
 
 ### 2. Simulation Layer (`src/simulation/`)
 
@@ -34,18 +36,17 @@ Multi-driver persistence with offline-first strategy:
 - **Drivers**: LocalStorage, SessionStorage, IndexDB, REST, WebSocket
 - **Serializer**: JSON export/import with versioning
 
-### 4. UI Bridge Layer - Build Mode (`src/ui-bridge/build-mode/`)
+### 4. UI Bridge Layer - Build Mode Controllers (`src/ui-bridge/controllers/build-mode/`)
 
 Build mode UI components:
 
 - **BuildModeController**: Build mode orchestration
 - **ComponentPalette**: Component library UI with drag-drop
-- **ComponentLibrary**: Component library management and instantiation
 - **BuildCanvas**: Visual diagram editor
 - **ComponentConfigPanel**: Component property editor
 - **DataBusManager**: DataBus creation and management UI
 
-### 5. UI Bridge Layer - Simulation Mode (`src/ui-bridge/simulation-mode/`)
+### 5. UI Bridge Layer - Simulation Mode Controllers (`src/ui-bridge/controllers/simulation-mode/`)
 
 Simulation mode UI components:
 
@@ -55,16 +56,21 @@ Simulation mode UI components:
 - **TimelineVisualization**: Frame timeline visualization
 - **EventLogViewer**: Event log display and filtering
 
-### 6. UI Bridge Layer - Composite Components (`src/ui-bridge/composite/`)
+### 6. UI Bridge Layer - Composite Controllers (`src/ui-bridge/controllers/composite/`)
 
 Composite component UI:
 
-- **CompositeLibrary**: Pre-built composite component definitions
 - **CompositeRenderer**: Composite component visualization
 - **DrillDownNavigator**: Drill-down navigation for nested components
 - **CompositeConfigPanel**: Composite component configuration
 
-### 7. UI Bridge Layer - Interactions & Animations (`src/ui-bridge/`)
+### 7. UI Bridge Layer - Adapters, Interactions & Animations (`src/ui-bridge/`)
+
+Renderer adapters:
+
+#### Adapters (`src/ui-bridge/adapters/`)
+- **D3Renderer**: D3 renderer adapter entry
+- **CanvasRenderer**: Canvas renderer adapter entry
 
 Interaction and animation handlers:
 
@@ -110,13 +116,13 @@ Common utilities:
 ### Build Mode
 
 ```
-User Input → UIBridge → Graph → ComponentLibrary → Storage
+User Input → UIBridge → ComponentLibrary (Core) → Graph → Storage
 ```
 
 1. User drags components and creates connections
 2. UIBridge captures interactions
-3. Graph validates and stores structure
-4. ComponentLibrary provides component definitions
+3. ComponentLibrary provides component definitions and instantiation
+4. Graph validates and stores structure
 5. Storage persists diagram
 
 ### Simulation Mode
@@ -136,15 +142,15 @@ Initial Input → SimulationEngine → Executor → Components → EventBus → 
 ### Analyze Mode
 
 ```
-Logs → LogParser → Analyzer → Metrics → ReportGenerator → UIBridge
+Logs → LogParser → LogReplay → Metrics → BottleneckDetector → ReportGenerator
 ```
 
 1. User uploads component logs
 2. LogParser validates and structures logs
-3. Analyzer replays logs through simulation
+3. LogReplay replays events through the event pipeline
 4. Metrics calculates performance data
-5. ReportGenerator creates analysis report
-6. UIBridge displays results
+5. BottleneckDetector identifies performance hotspots
+6. ReportGenerator creates report output (JSON/CSV/HTML)
 
 ## Component URN Structure
 
@@ -330,7 +336,7 @@ class CustomDriver {
 - Analyze mode workflow
 - Storage sync strategies
 
-### E2E Tests
+### E2E Tests (Planned)
 
 - Complete user workflows
 - 7-component test scenario

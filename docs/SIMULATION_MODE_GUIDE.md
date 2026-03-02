@@ -40,4 +40,4 @@ Shows events emitted during simulation with filtering and export options.
 
 ## API
 
-See `docs/UI_COMPONENTS_REFERENCE.md` for detailed API documentation.
+See `docs/API_REFERENCE.md` for detailed API documentation.

@@ -455,7 +455,7 @@ timeline.loopSegment('segment-1', 3);
 - `generate(metrics, bottlenecks)` - Generate
 - `exportJSON(report)` - Export JSON
 - `exportCSV(report)` - Export CSV
-- `exportHTML(report)` - Export HTML
+- `report.html` - Generated HTML output from `generate(...)`
 
 ---
 
@@ -707,7 +707,7 @@ const report = generator.generate(metrics.getMetrics(), detector.getBottlenecks(
 
 const json = generator.exportJSON(report);
 const csv = generator.exportCSV(report);
-const html = generator.exportHTML(report);
+const html = report.html;
 
 console.log('Report generated');
 ```
@@ -722,18 +722,21 @@ const stochastic = new StochasticConfig();
 stochastic.configureProperty('db-1', 'executionTime', 'normal', { mean: 100, stdDev: 20 });
 stochastic.configureProperty('api-1', 'latency', 'exponential', { lambda: 0.01 });
 
-const manager = new MultipleRunManager(engine, stochastic);
-const results = await manager.executeMultipleRuns(100, {
+const manager = new MultipleRunManager(engine, stochastic, eventBus, {
+  resetAfterSingleRun: true,
+  pollIntervalMs: 100
+});
+const runResult = await manager.executeMultipleRuns(100, {
   'api-1': { request: { method: 'GET' } }
 });
 
 const analysis = new StatisticalAnalysis();
-const stats = analysis.analyze(results);
+const stats = analysis.analyze(runResult.runs);
 
-console.log('Mean:', stats.mean);
-console.log('Median:', stats.median);
-console.log('Std Dev:', stats.stdDev);
-console.log('95% CI:', stats.confidenceInterval);
+console.log('Cost Mean:', stats.summary.cost.mean);
+console.log('Cost Median:', stats.summary.cost.median);
+console.log('Cost Std Dev:', stats.summary.cost.stdDev);
+console.log('95% CI:', stats.confidence.cost);
 ```
 
 ### Example 6: Storage

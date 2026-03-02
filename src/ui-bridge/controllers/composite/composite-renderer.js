@@ -3,7 +3,7 @@
  * Renders composite components with expand/collapse
  */
 
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class CompositeRenderer {
   /**

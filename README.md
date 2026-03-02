@@ -11,8 +11,8 @@ A comprehensive platform for visualizing, simulating, and analyzing cloud-native
 ### Installation
 
 ```bash
-git clone https://gitlab.com/bhagwati3-group/bhagwati3-project.git
-cd bhagwati3-project
+git clone https://github.com/bhagwati-prasad/fsm-2.git
+cd fsm-2
 npm install
 ```
 
@@ -82,7 +82,7 @@ cloud-native-fsm-tool/
 ├── public/                 # Frontend assets
 ├── tests/                  # All tests
 ├── docs/                   # Documentation
-├── config/                 # Configuration
+├── DEPLOYMENT_README.md    # Deployment guide
 ├── .babelrc                # Babel config
 ├── jest.config.js          # Jest config
 ├── jest.setup.js           # Jest setup
@@ -135,8 +135,9 @@ npm run test:watch
 
 - **[Complete Documentation](docs/COMPLETE_DOCUMENTATION.md)**
 - **[API Reference](docs/API_REFERENCE.md)**
-- **[Deployment Guide](docs/DEPLOYMENT.md)**
-- **[Bugfix Task List](docs/BUGFIX_TASK_LIST.md)**
+- **[Architecture Decision Records](docs/adr/README.md)**
+- **[Deployment Guide](DEPLOYMENT_README.md)**
+- **[Documentation Index](docs/README.md)**
 
 ## Development
 
@@ -146,6 +147,9 @@ npm run lint
 
 # Format code
 npm run format
+
+# Refresh component/composite definition indexes
+npm run library:refresh-indexes
 
 # Build
 npm run build
@@ -169,5 +173,5 @@ MIT License - See LICENSE file for details
 ## Support
 
 For issues and questions:
-- **GitHub Issues**: [project-repo]/issues
+- **GitHub Issues**: https://github.com/bhagwati-prasad/fsm-2/issues
 - **Email**: support@example.com

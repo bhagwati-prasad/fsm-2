@@ -11,8 +11,11 @@ export class MultipleRunManager {
    * @param {SimulationEngine} engine - Simulation engine
    * @param {StochasticConfig} stochasticConfig - Stochastic configuration
    * @param {EventBus} eventBus - Event bus
+    * @param {Object} [options] - Runtime options
+    * @param {boolean} [options.resetAfterSingleRun=true] - Whether to reset engine after each completed run
+    * @param {number} [options.pollIntervalMs=100] - Poll interval for run completion checks
    */
-  constructor(engine, stochasticConfig, eventBus) {
+  constructor(engine, stochasticConfig, eventBus, options = {}) {
     this.logger = new Logger('MultipleRunManager');
     this.engine = engine;
     this.stochasticConfig = stochasticConfig;
@@ -20,6 +23,8 @@ export class MultipleRunManager {
     this.runs = [];
     this.currentRunIndex = 0;
     this.isRunning = false;
+    this.resetAfterSingleRun = options.resetAfterSingleRun !== false;
+    this.pollIntervalMs = options.pollIntervalMs || 100;
   }
 
   /**
@@ -122,20 +127,23 @@ export class MultipleRunManager {
         if (state.status === 'stopped') {
           clearInterval(checkCompletion);
           const duration = Date.now() - startTime;
+          const runState = { ...state };
+          const runErrors = [...this.engine.getErrors()];
+
+          if (this.resetAfterSingleRun) {
+            this.engine.reset();
+          }
 
           resolve({
             runNumber,
             status: 'success',
             duration,
             stochasticValues,
-            simulationState: state,
-            errors: this.engine.getErrors()
+            simulationState: runState,
+            errors: runErrors
           });
         }
-      }, 100);
-
-      // Reset for next run
-      this.engine.reset();
+      }, this.pollIntervalMs);
     });
   }
 

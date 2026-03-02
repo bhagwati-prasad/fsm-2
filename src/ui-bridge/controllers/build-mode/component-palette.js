@@ -3,7 +3,7 @@
  * Manages component library and drag-to-canvas functionality
  */
 
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class ComponentPalette {
   /**

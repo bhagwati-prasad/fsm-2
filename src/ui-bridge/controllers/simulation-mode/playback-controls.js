@@ -3,7 +3,7 @@
  * Controls simulation playback
  */
 
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class PlaybackControls {
   /**

@@ -7,7 +7,7 @@ import { InputForm } from './input-form';
 import { PlaybackControls } from './playback-controls';
 import { TimelineVisualization } from './timeline-visualization';
 import { EventLogViewer } from './event-log-viewer';
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class SimulationModeController {
   /**

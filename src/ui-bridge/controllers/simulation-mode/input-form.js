@@ -3,7 +3,7 @@
  * Collects initial inputs for simulation
  */
 
-import { Logger } from '../../utils/logger';
+import { Logger } from '../../../utils/logger';
 
 export class InputForm {
   /**

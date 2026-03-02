@@ -2,8 +2,8 @@
  * Integration tests for UIBridge and renderers
  */
 
-import { D3Renderer } from '../../../src/ui-bridge/renderers/d3-renderer';
-import { CanvasRenderer } from '../../../src/ui-bridge/renderers/canvas-renderer';
+import { D3Renderer } from '../../../src/ui-bridge/adapters/renderers/d3-renderer';
+import { CanvasRenderer } from '../../../src/ui-bridge/adapters/renderers/canvas-renderer';
 import { DragDropHandler } from '../../../src/ui-bridge/interactions/drag-drop';
 import { StateAnimator } from '../../../src/ui-bridge/animations/state-animator';
 import { Graph } from '../../../src/core/graph';
