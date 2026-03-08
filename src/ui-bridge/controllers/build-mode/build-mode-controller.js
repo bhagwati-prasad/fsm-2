@@ -44,89 +44,55 @@ export class BuildModeController {
    * @private
    */
   createLayout() {
-    const existingLayout = this.container.querySelector('.build-mode-layout');
-    if (existingLayout) {
-      this.layoutElement = existingLayout;
-      return;
+    const ensureChild = (parent, selector, tagName = 'div', className = null) => {
+      if (!parent) {
+        return null;
+      }
+
+      let child = parent.querySelector(selector);
+      if (!child) {
+        child = document.createElement(tagName);
+        if (className) {
+          child.className = className;
+        }
+        parent.appendChild(child);
+      }
+      return child;
+    };
+
+    // Use the build mode container from index.html as the single source of truth.
+    this.layoutElement = this.container;
+    //this.layoutElement.classList.add('build-mode-layout');
+
+    const sidebar = this.layoutElement.querySelector('.build-sidebar, .palette-sidebar');
+    const main = this.layoutElement.querySelector('.build-main, .canvas-area');
+    const config = this.layoutElement.querySelector('.build-config, .config-panel');
+
+    if (!sidebar || !main || !config) {
+      throw new Error('Build mode container is missing required sections in index.html');
     }
 
-    const legacyPalette = this.container.querySelector('.palette-sidebar');
-    const legacyCanvas = this.container.querySelector('.canvas-area');
-    const legacyConfig = this.container.querySelector('.config-panel');
+    sidebar.classList.add('build-sidebar');
+    main.classList.add('build-main');
+    config.classList.add('build-config');
 
-    if (legacyPalette || legacyCanvas || legacyConfig) {
-      const ensureChild = (parent, selector, tagName = 'div', className = null) => {
-        if (!parent) {
-          return null;
-        }
+    ensureChild(sidebar, '.sidebar-palette', 'div', 'sidebar-palette');
+    ensureChild(sidebar, '.sidebar-databus', 'div', 'sidebar-databus');
 
-        let child = parent.querySelector(selector);
-        if (!child) {
-          child = document.createElement(tagName);
-          if (className) {
-            child.className = className;
-          }
-          parent.appendChild(child);
-        }
-        return child;
-      };
-
-      if (legacyPalette) {
-        legacyPalette.classList.add('build-sidebar');
-        ensureChild(legacyPalette, '.sidebar-palette', 'div', 'sidebar-palette');
-        ensureChild(legacyPalette, '.sidebar-databus', 'div', 'sidebar-databus');
-      }
-
-      if (legacyCanvas) {
-        legacyCanvas.classList.add('build-main');
-
-        const toolbar = ensureChild(legacyCanvas, '.build-toolbar', 'div', 'build-toolbar');
-        if (toolbar && toolbar.children.length === 0) {
-          toolbar.innerHTML = `
-            <button class="btn-save">Save</button>
-            <button class="btn-annotations">Annotations</button>
-            <button class="btn-download">Download</button>
-            <button class="btn-upload">Upload</button>
-            <button class="btn-clear">Clear</button>
-            <button class="btn-switch-mode">Switch to Simulation</button>
-            <input type="file" class="file-upload-input" accept="application/json" style="display:none;">
-          `;
-        }
-
-        ensureChild(legacyCanvas, '.build-canvas-container', 'div', 'build-canvas-container');
-      }
-
-      if (legacyConfig) {
-        legacyConfig.classList.add('build-config');
-      }
-
-      this.layoutElement = this.container;
-      return;
+    const toolbar = ensureChild(main, '.build-toolbar', 'div', 'build-toolbar');
+    if (toolbar && toolbar.children.length === 0) {
+      toolbar.innerHTML = `
+        <button class="btn-save">Save</button>
+        <button class="btn-annotations">Annotations</button>
+        <button class="btn-download">Download</button>
+        <button class="btn-upload">Upload</button>
+        <button class="btn-clear">Clear</button>
+        <button class="btn-switch-mode">Switch to Simulation</button>
+        <input type="file" class="file-upload-input" accept="application/json" style="display:none;">
+      `;
     }
 
-    const layout = document.createElement('div');
-    layout.className = 'build-mode-layout';
-    layout.innerHTML = `
-      <div class="build-sidebar">
-        <div class="sidebar-palette"></div>
-        <div class="sidebar-databus"></div>
-      </div>
-      <div class="build-main">
-        <div class="build-toolbar">
-          <button class="btn-save">Save</button>
-          <button class="btn-annotations">Annotations</button>
-          <button class="btn-download">Download</button>
-          <button class="btn-upload">Upload</button>
-          <button class="btn-clear">Clear</button>
-          <button class="btn-switch-mode">Switch to Simulation</button>
-          <input type="file" class="file-upload-input" accept="application/json" style="display:none;">
-        </div>
-        <div class="build-canvas-container"></div>
-      </div>
-      <div class="build-config"></div>
-    `;
-    this.container.appendChild(layout);
-    this.layoutElement = layout;
+    ensureChild(main, '.build-canvas-container', 'div', 'build-canvas-container');
   }
 
   /**
