@@ -336,6 +336,145 @@ body {
   margin-top: 0.25rem;
 }
 
+/* Generic Modal */
+.app-modal-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 2000;
+}
+
+.app-modal {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.app-modal--full-screen {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+}
+
+.app-modal--most-of-screen {
+  width: 90vw;
+  height: 90vh;
+}
+
+.app-modal--medium {
+  width: min(60vw, 960px);
+  height: 60vh;
+  min-height: 360px;
+}
+
+.app-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.app-modal-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.app-modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  background-color: transparent;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.app-modal-close:hover {
+  background-color: #ecf0f1;
+}
+
+.app-modal-body {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  overflow: auto;
+}
+
+.app-modal-footer {
+  border-top: 1px solid #ddd;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.app-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.app-modal-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.app-modal-btn-primary {
+  background-color: #1abc9c;
+  border-color: #1abc9c;
+  color: white;
+}
+
+.app-modal-message {
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.modal-form-field label {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.modal-form-field input,
+.modal-form-field select,
+.modal-form-field textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.modal-form-field textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
 /* Footer */
 .app-footer {
   background-color: #2c3e50;
@@ -363,6 +502,12 @@ body {
 @media (max-width: 768px) {
   .mode-container {
     flex-direction: column;
+  }
+
+  .app-modal--medium,
+  .app-modal--most-of-screen {
+    width: 94vw;
+    height: 90vh;
   }
 
   .sidebar,

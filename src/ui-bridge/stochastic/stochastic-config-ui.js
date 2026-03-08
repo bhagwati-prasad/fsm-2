@@ -4,6 +4,7 @@
  */
 
 import { Logger } from '../../utils/logger';
+import { Modal } from '../../ui-components/modal';
 
 export class StochasticConfigUI {
   /**
@@ -157,7 +158,7 @@ export class StochasticConfigUI {
   saveConfiguration() {
     const distributionRadio = this.distributionSelector.querySelector('input[type="radio"]:checked');
     if (!distributionRadio) {
-      alert('Please select a distribution');
+      Modal.alert('Please select a distribution', { title: 'Missing Selection' });
       return;
     }
 
@@ -188,7 +189,7 @@ export class StochasticConfigUI {
       }
     });
 
-    alert('Configuration saved!');
+    Modal.alert('Configuration saved!', { title: 'Saved' });
   }
 
   /**

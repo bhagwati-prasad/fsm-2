@@ -8,6 +8,7 @@ import { PlaybackControls } from './playback-controls';
 import { TimelineVisualization } from './timeline-visualization';
 import { EventLogViewer } from './event-log-viewer';
 import { Logger } from '../../../utils/logger';
+import { Modal } from '../../../ui-components/modal';
 
 export class SimulationModeController {
   /**
@@ -151,13 +152,13 @@ export class SimulationModeController {
     const initResult = this.engine.init(inputs);
 
     if (initResult.status !== 'success') {
-      alert(`Initialization failed: ${initResult.message}`);
+      Modal.alert(`Initialization failed: ${initResult.message}`, { title: 'Simulation Error' });
       return;
     }
 
     const startResult = this.engine.start();
     if (startResult.status !== 'success') {
-      alert(`Start failed: ${startResult.message}`);
+      Modal.alert(`Start failed: ${startResult.message}`, { title: 'Simulation Error' });
       return;
     }
   }

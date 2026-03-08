@@ -75,6 +75,9 @@ export { Logger } from './utils/logger';
 export { URNGenerator } from './utils/urn-generator';
 export { PerformanceMonitor } from './utils/performance';
 
+// UI Components
+export { Modal, MODAL_SIZES } from './ui-components/modal';
+
 // Version
 export const VERSION = '1.0.0';
 export const BUILD_DATE = '2026-02-22';

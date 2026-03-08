@@ -8,6 +8,7 @@ import { BuildCanvas } from './build-canvas';
 import { ComponentConfigPanel } from './component-config-panel';
 import { DataBusManager } from './databus-manager';
 import { Logger } from '../../../utils/logger';
+import { Modal } from '../../../ui-components/modal';
 
 export class BuildModeController {
   /**
@@ -212,7 +213,7 @@ export class BuildModeController {
       `Usage: ${component.usage || 'N/A'}`
     ].join('\n');
 
-    alert(details);
+    Modal.alert(details, { title: 'Component Details' });
   }
 
   /**
@@ -237,30 +238,25 @@ export class BuildModeController {
     });
   }
 
-  editAnnotations() {
+  async editAnnotations() {
     const current = this.graph.getAnnotations ? this.graph.getAnnotations() : { title: '', description: '', metadata: {} };
 
-    const title = prompt('Graph annotation title', current.title || '');
-    if (title === null) return;
+    const annotationValues = await this.showAnnotationsDialog(current);
+    if (!annotationValues) {
+      return;
+    }
 
-    const description = prompt('Graph annotation description', current.description || '');
-    if (description === null) return;
-
-    const metadataInput = prompt(
-      'Graph annotation metadata (JSON object)',
-      JSON.stringify(current.metadata || {}, null, 2)
-    );
-    if (metadataInput === null) return;
+    const { title, description, metadataInput } = annotationValues;
 
     let metadata = {};
     try {
       metadata = metadataInput.trim() ? JSON.parse(metadataInput) : {};
       if (typeof metadata !== 'object' || Array.isArray(metadata)) {
-        alert('Metadata must be a JSON object');
+        Modal.alert('Metadata must be a JSON object', { title: 'Invalid Metadata' });
         return;
       }
     } catch (error) {
-      alert(`Invalid metadata JSON: ${error.message}`);
+      Modal.alert(`Invalid metadata JSON: ${error.message}`, { title: 'Invalid Metadata' });
       return;
     }
 
@@ -273,6 +269,82 @@ export class BuildModeController {
       payload: {
         annotations: this.graph.getAnnotations()
       }
+    });
+  }
+
+  showAnnotationsDialog(current) {
+    return new Promise((resolve) => {
+      const modal = new Modal({
+        title: 'Edit Graph Annotations',
+        size: 'medium'
+      });
+
+      const form = document.createElement('div');
+      form.className = 'modal-form';
+      form.innerHTML = `
+        <div class="modal-form-field">
+          <label>Graph annotation title</label>
+          <input type="text" class="annotations-title">
+        </div>
+        <div class="modal-form-field">
+          <label>Graph annotation description</label>
+          <textarea class="annotations-description" rows="4"></textarea>
+        </div>
+        <div class="modal-form-field">
+          <label>Graph annotation metadata (JSON object)</label>
+          <textarea class="annotations-metadata" rows="10"></textarea>
+        </div>
+      `;
+
+      const actions = document.createElement('div');
+      actions.className = 'app-modal-actions';
+      actions.innerHTML = `
+        <button class="app-modal-btn app-modal-btn-primary btn-save-annotations">Save</button>
+        <button class="app-modal-btn btn-cancel-annotations">Cancel</button>
+      `;
+
+      modal.setBody(form);
+      modal.setFooter(actions);
+
+      const titleInput = form.querySelector('.annotations-title');
+      const descriptionInput = form.querySelector('.annotations-description');
+      const metadataInput = form.querySelector('.annotations-metadata');
+
+      titleInput.value = current.title || '';
+      descriptionInput.value = current.description || '';
+      metadataInput.value = JSON.stringify(current.metadata || {}, null, 2);
+
+      const saveButton = actions.querySelector('.btn-save-annotations');
+      const cancelButton = actions.querySelector('.btn-cancel-annotations');
+
+      let resolved = false;
+      const finish = (value) => {
+        if (resolved) {
+          return;
+        }
+        resolved = true;
+        resolve(value);
+      };
+
+      saveButton.addEventListener('click', () => {
+        finish({
+          title: titleInput.value,
+          description: descriptionInput.value,
+          metadataInput: metadataInput.value
+        });
+        modal.close();
+      });
+
+      cancelButton.addEventListener('click', () => {
+        modal.close();
+      });
+
+      modal.onClose(() => {
+        finish(null);
+      });
+
+      modal.open();
+      titleInput.focus();
     });
   }
 
@@ -344,7 +416,7 @@ export class BuildModeController {
       const data = JSON.parse(text);
       this.applyImportedGraph(data);
     } catch (error) {
-      alert(`Failed to import graph: ${error.message}`);
+      Modal.alert(`Failed to import graph: ${error.message}`, { title: 'Import Failed' });
     } finally {
       input.value = '';
     }
@@ -443,7 +515,7 @@ export class BuildModeController {
    */
   switchMode() {
     if (this.graph.getComponents().length === 0) {
-      alert('Please add at least one component before switching to simulation mode');
+      Modal.alert('Please add at least one component before switching to simulation mode', { title: 'Cannot Switch Mode' });
       return;
     }
 

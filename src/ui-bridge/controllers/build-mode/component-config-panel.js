@@ -4,6 +4,7 @@
  */
 
 import { Logger } from '../../../utils/logger';
+import { Modal } from '../../../ui-components/modal';
 
 export class ComponentConfigPanel {
   /**
@@ -165,11 +166,11 @@ export class ComponentConfigPanel {
       try {
         metadata = metadataInput.value.trim() ? JSON.parse(metadataInput.value) : {};
         if (typeof metadata !== 'object' || Array.isArray(metadata)) {
-          alert('Metadata must be a JSON object');
+          Modal.alert('Metadata must be a JSON object', { title: 'Invalid Metadata' });
           return;
         }
       } catch (error) {
-        alert(`Invalid metadata JSON: ${error.message}`);
+        Modal.alert(`Invalid metadata JSON: ${error.message}`, { title: 'Invalid Metadata' });
         return;
       }
 

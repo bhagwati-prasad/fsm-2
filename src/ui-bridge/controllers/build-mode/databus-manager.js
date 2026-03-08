@@ -5,6 +5,7 @@
 
 import { Logger } from '../../../utils/logger';
 import { DataBus } from '../../../core/databus';
+import { Modal } from '../../../ui-components/modal';
 
 export class DataBusManager {
   /**
@@ -64,42 +65,47 @@ export class DataBusManager {
    * @private
    */
   showAddDialog() {
-    const dialog = document.createElement('div');
-    dialog.className = 'databus-dialog';
-    dialog.innerHTML = `
-      <div class="dialog-content">
-        <h3>Create DataBus</h3>
-        <div class="dialog-field">
-          <label>DataBus ID</label>
-          <input type="text" class="dialog-id" placeholder="e.g., databus-1">
-        </div>
-        <div class="dialog-field">
-          <label>Type</label>
-          <select class="dialog-type">
-            <option value="one-to-one">One-to-One</option>
-            <option value="one-to-many">One-to-Many</option>
-            <option value="many-to-one">Many-to-One</option>
-            <option value="many-to-many">Many-to-Many</option>
-          </select>
-        </div>
-        <div class="dialog-field">
-          <label>Bandwidth (bytes/frame)</label>
-          <input type="number" class="dialog-bandwidth" placeholder="e.g., 1000">
-        </div>
-        <div class="dialog-actions">
-          <button class="btn-create">Create</button>
-          <button class="btn-cancel">Cancel</button>
-        </div>
+    const modal = new Modal({
+      title: 'Create DataBus'
+    });
+
+    const form = document.createElement('div');
+    form.className = 'modal-form';
+    form.innerHTML = `
+      <div class="modal-form-field">
+        <label>DataBus ID</label>
+        <input type="text" class="dialog-id" placeholder="e.g., databus-1">
+      </div>
+      <div class="modal-form-field">
+        <label>Type</label>
+        <select class="dialog-type">
+          <option value="one-to-one">One-to-One</option>
+          <option value="one-to-many">One-to-Many</option>
+          <option value="many-to-one">Many-to-One</option>
+          <option value="many-to-many">Many-to-Many</option>
+        </select>
+      </div>
+      <div class="modal-form-field">
+        <label>Bandwidth (bytes/frame)</label>
+        <input type="number" class="dialog-bandwidth" placeholder="e.g., 1000">
       </div>
     `;
 
-    document.body.appendChild(dialog);
+    const actions = document.createElement('div');
+    actions.className = 'app-modal-actions';
+    actions.innerHTML = `
+      <button class="app-modal-btn app-modal-btn-primary btn-create">Create</button>
+      <button class="app-modal-btn btn-cancel">Cancel</button>
+    `;
 
-    const createBtn = dialog.querySelector('.btn-create');
-    const cancelBtn = dialog.querySelector('.btn-cancel');
-    const idInput = dialog.querySelector('.dialog-id');
-    const typeSelect = dialog.querySelector('.dialog-type');
-    const bandwidthInput = dialog.querySelector('.dialog-bandwidth');
+    modal.setBody(form);
+    modal.setFooter(actions);
+
+    const createBtn = actions.querySelector('.btn-create');
+    const cancelBtn = actions.querySelector('.btn-cancel');
+    const idInput = form.querySelector('.dialog-id');
+    const typeSelect = form.querySelector('.dialog-type');
+    const bandwidthInput = form.querySelector('.dialog-bandwidth');
 
     createBtn.addEventListener('click', () => {
       const id = idInput.value;
@@ -107,17 +113,20 @@ export class DataBusManager {
       const bandwidth = parseInt(bandwidthInput.value) || null;
 
       if (!id) {
-        alert('Please enter a DataBus ID');
+        Modal.alert('Please enter a DataBus ID', { title: 'Missing DataBus ID' });
         return;
       }
 
       this.createDataBus(id, type, bandwidth);
-      document.body.removeChild(dialog);
+      modal.close();
     });
 
     cancelBtn.addEventListener('click', () => {
-      document.body.removeChild(dialog);
+      modal.close();
     });
+
+    modal.open();
+    idInput.focus();
   }
 
   /**

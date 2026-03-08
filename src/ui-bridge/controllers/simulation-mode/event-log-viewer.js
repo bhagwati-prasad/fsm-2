@@ -4,6 +4,7 @@
  */
 
 import { Logger } from '../../../utils/logger';
+import { Modal } from '../../../ui-components/modal';
 
 export class EventLogViewer {
   /**
@@ -116,7 +117,7 @@ export class EventLogViewer {
    */
   showEventDetails(event) {
     const details = JSON.stringify(event, null, 2);
-    alert(`Event Details:\n\n${details}`);
+    Modal.alert(details, { title: 'Event Details', size: 'most-of-screen' });
   }
 
   /**
