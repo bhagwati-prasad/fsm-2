@@ -82,6 +82,26 @@ body {
 }
 
 /* Canvas Area */
+.dot-bkg {
+  background-size: 40px 40px;
+  background-image: radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px);
+}
+.bg-graph-paper {
+  background-color: #fff;
+  background-image: linear-gradient(rgba(244,244,250,.8) 1px,transparent 0),
+                    linear-gradient(#f4f4fa 1px,transparent 0),
+                    linear-gradient(90deg,rgba(244,244,250,.8) 1px,transparent 0),
+                    linear-gradient(90deg,#f4f4fa 1px,transparent 0),
+                    linear-gradient(transparent 3px,#fff 0,#fff 94px,transparent 0),
+                    linear-gradient(90deg,#f4f4fa 3px,transparent 0,transparent 94px,#f4f4fa 0);
+  background-size: 24px 24px,96px 96px,24px 24px,96px 96px,96px 96px,96px 96px;
+}
+.canvas-content {
+  user-select: none;
+  --moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
 .canvas-area {
   flex: 1;
   background-color: white;

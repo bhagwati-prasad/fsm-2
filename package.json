@@ -4,7 +4,9 @@
   "description": "Cloud-Native Architecture FSM Tool - Visualize, simulate, and analyze cloud-native architectures",
   "main": "src/index.js",
   "scripts": {
+    "prestart": "npm run build",
     "start": "node src/server.js",
+    "predev": "npm run build:dev",
     "dev": "nodemon src/server.js",
     "start:unbundled": "UNBUNDLED=true node src/server.js",
     "dev:unbundled": "UNBUNDLED=true nodemon src/server.js",

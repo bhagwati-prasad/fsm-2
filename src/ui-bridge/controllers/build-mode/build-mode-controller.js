@@ -62,7 +62,7 @@ export class BuildModeController {
 
     // Use the build mode container from index.html as the single source of truth.
     this.layoutElement = this.container;
-    //this.layoutElement.classList.add('build-mode-layout');
+    this.layoutElement.classList.add('build-mode-layout');
 
     const sidebar = this.layoutElement.querySelector('.build-sidebar, .palette-sidebar');
     const main = this.layoutElement.querySelector('.build-main, .canvas-area');
@@ -315,6 +315,10 @@ export class BuildModeController {
   }
 
   buildExportPayload() {
+    const layoutById = typeof this.renderer.getLayoutSnapshot === 'function'
+      ? this.renderer.getLayoutSnapshot()
+      : {};
+
     return {
       schemaVersion: '1.0.0',
       exportedAt: new Date().toISOString(),
@@ -340,6 +344,7 @@ export class BuildModeController {
         costModel: component.costModel,
         parentId: component.parentId,
         graphScope: component.graphScope,
+        layout: layoutById[component.id] || component.layout || null,
         metadata: component.metadata,
         stateSnapshot: component.getStateSnapshot()
       })),
@@ -425,6 +430,13 @@ export class BuildModeController {
 
       if (componentData.metadata) {
         component.metadata = componentData.metadata;
+      }
+
+      if (componentData.layout) {
+        component.layout = {
+          x: componentData.layout.x,
+          y: componentData.layout.y
+        };
       }
 
       if (componentData.stateSnapshot) {

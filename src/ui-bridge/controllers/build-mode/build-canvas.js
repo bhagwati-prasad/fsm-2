@@ -168,6 +168,11 @@ export class BuildCanvas {
    * @param {number} y - Y position
    */
   addComponent(component, x, y) {
+    component.layout = {
+      x,
+      y
+    };
+
     this.graph.addComponent(component);
     this.render();
     this.showWelcomePrompt();

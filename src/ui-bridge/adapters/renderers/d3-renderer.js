@@ -5,6 +5,7 @@
 
 import { UIBridge } from '../../ui-bridge';
 import { Logger } from '../../../utils/logger';
+import { createNodeIcon } from './d3-icons';
 
 export class D3Renderer extends UIBridge {
   /**
@@ -23,6 +24,124 @@ export class D3Renderer extends UIBridge {
     this.nodeElements = null;
     this.linkElements = null;
     this.selectedNode = null;
+    this.isDraggingNode = false;
+    this.dragNodeId = null;
+    this.dragOffsetX = 0;
+    this.dragOffsetY = 0;
+    this.dragStartClientX = 0;
+    this.dragStartClientY = 0;
+    this.suppressNodeClick = false;
+
+    this.boundHandleNodeDragMove = (e) => this.handleNodeDragMove(e);
+    this.boundHandleNodeDragEnd = () => this.handleNodeDragEnd();
+  }
+
+  truncateLabel(label, maxLength = 18) {
+    if (!label) return '';
+    return label.length > maxLength ? `${label.slice(0, maxLength - 1)}...` : label;
+  }
+
+  /**
+   * Convert viewport coordinates to graph coordinates, accounting for zoom/pan
+   * @private
+   */
+  viewportToGraph(clientX, clientY) {
+    const rect = this.svg.getBoundingClientRect();
+    return {
+      x: (clientX - rect.left - this.zoom.translateX) / this.zoom.scale,
+      y: (clientY - rect.top - this.zoom.translateY) / this.zoom.scale
+    };
+  }
+
+  /**
+   * Begin drag interaction for a node
+   * @private
+   */
+  startNodeDrag(event, nodeId) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    const node = this.nodes.find((n) => n.id === nodeId);
+    if (!node) {
+      return;
+    }
+
+    const pointer = this.viewportToGraph(event.clientX, event.clientY);
+
+    this.isDraggingNode = true;
+    this.dragNodeId = nodeId;
+    this.dragOffsetX = pointer.x - node.x;
+    this.dragOffsetY = pointer.y - node.y;
+    this.dragStartClientX = event.clientX;
+    this.dragStartClientY = event.clientY;
+    this.suppressNodeClick = false;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    document.addEventListener('mousemove', this.boundHandleNodeDragMove);
+    document.addEventListener('mouseup', this.boundHandleNodeDragEnd);
+  }
+
+  /**
+   * Handle node dragging while mouse moves
+   * @private
+   */
+  handleNodeDragMove(event) {
+    if (!this.isDraggingNode || !this.dragNodeId) {
+      return;
+    }
+
+    const node = this.nodes.find((n) => n.id === this.dragNodeId);
+    if (!node) {
+      return;
+    }
+
+    const pointer = this.viewportToGraph(event.clientX, event.clientY);
+    node.x = pointer.x - this.dragOffsetX;
+    node.y = pointer.y - this.dragOffsetY;
+
+    // Keep moved nodes in view bounds.
+    const { width, height } = this.getContainerDimensions();
+    node.x = Math.max(30, Math.min(width - 30, node.x));
+    node.y = Math.max(30, Math.min(height - 30, node.y));
+
+    const component = this.graph.getComponent(node.id);
+    if (component) {
+      component.layout = {
+        x: node.x,
+        y: node.y
+      };
+    }
+
+    if (Math.abs(event.clientX - this.dragStartClientX) > 3 || Math.abs(event.clientY - this.dragStartClientY) > 3) {
+      this.suppressNodeClick = true;
+    }
+
+    this.render();
+  }
+
+  /**
+   * Finish node dragging
+   * @private
+   */
+  handleNodeDragEnd() {
+    if (!this.isDraggingNode) {
+      return;
+    }
+
+    this.isDraggingNode = false;
+    this.dragNodeId = null;
+
+    document.removeEventListener('mousemove', this.boundHandleNodeDragMove);
+    document.removeEventListener('mouseup', this.boundHandleNodeDragEnd);
+
+    if (this.suppressNodeClick) {
+      setTimeout(() => {
+        this.suppressNodeClick = false;
+      }, 0);
+    }
   }
 
   getContainerDimensions() {
@@ -83,8 +202,8 @@ export class D3Renderer extends UIBridge {
       urn: component.urn,
       name: component.name,
       type: component.type,
-      x: existingNodes.get(component.id)?.x ?? Math.random() * 400,
-      y: existingNodes.get(component.id)?.y ?? Math.random() * 400
+      x: existingNodes.get(component.id)?.x ?? component.layout?.x ?? Math.random() * 400,
+      y: existingNodes.get(component.id)?.y ?? component.layout?.y ?? Math.random() * 400
     }));
 
     // Create links from connections
@@ -208,6 +327,7 @@ export class D3Renderer extends UIBridge {
 
     // Draw nodes
     this.nodes.forEach((node) => {
+      const component = this.graph.getComponent(node.id);
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       circle.setAttribute('cx', node.x);
       circle.setAttribute('cy', node.y);
@@ -218,18 +338,31 @@ export class D3Renderer extends UIBridge {
       circle.setAttribute('stroke-width', '2');
       circle.setAttribute('data-component-id', node.id);
 
-      // Add click handler
-      circle.addEventListener('click', () => this.selectComponent(node.id));
+      // Add click/drag handlers
+      circle.addEventListener('click', (event) => {
+        if (this.suppressNodeClick) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        this.selectComponent(node.id);
+      });
+      circle.addEventListener('mousedown', (event) => this.startNodeDrag(event, node.id));
+      circle.style.cursor = 'grab';
+
+      const icon = createNodeIcon(document, node.x, node.y - 7, component || node);
 
       // Add label
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       text.setAttribute('x', node.x);
-      text.setAttribute('y', node.y);
+      text.setAttribute('y', node.y + 13);
       text.setAttribute('text-anchor', 'middle');
       text.setAttribute('dy', '0.3em');
-      text.setAttribute('font-size', '12');
+      text.setAttribute('font-size', '10.5');
+      text.setAttribute('font-weight', '600');
+      text.setAttribute('fill', '#1f2937');
       text.setAttribute('pointer-events', 'none');
-      text.textContent = node.name;
+      text.textContent = this.truncateLabel(node.name);
 
       const infoIconBg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       infoIconBg.setAttribute('cx', node.x + 22);
@@ -261,6 +394,7 @@ export class D3Renderer extends UIBridge {
       });
 
       g.appendChild(circle);
+      g.appendChild(icon);
       g.appendChild(text);
       g.appendChild(infoIconBg);
       g.appendChild(infoIconText);
@@ -446,6 +580,20 @@ export class D3Renderer extends UIBridge {
   }
 
   /**
+   * Get current node geometry keyed by component id
+   * @returns {Object} layout snapshot
+   */
+  getLayoutSnapshot() {
+    return this.nodes.reduce((acc, node) => {
+      acc[node.id] = {
+        x: node.x,
+        y: node.y
+      };
+      return acc;
+    }, {});
+  }
+
+  /**
    * Clear canvas
    */
   clear() {
@@ -461,6 +609,9 @@ export class D3Renderer extends UIBridge {
    * Destroy renderer
    */
   destroy() {
+    document.removeEventListener('mousemove', this.boundHandleNodeDragMove);
+    document.removeEventListener('mouseup', this.boundHandleNodeDragEnd);
+
     if (this.svg && this.svg.parentNode) {
       this.svg.parentNode.removeChild(this.svg);
     }

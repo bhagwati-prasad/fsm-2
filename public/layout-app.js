@@ -10,6 +10,17 @@ class LayoutApp {
     this.components = new Map();
     this.connections = new Map();
     this.zoom = 100;
+    this.dragState = {
+      isDragging: false,
+      componentId: null,
+      startMouseX: 0,
+      startMouseY: 0,
+      startX: 0,
+      startY: 0
+    };
+
+    this.boundHandleComponentDragMove = (e) => this.handleComponentDragMove(e);
+    this.boundHandleComponentDragEnd = (e) => this.handleComponentDragEnd(e);
     this.init();
   }
 
@@ -41,6 +52,9 @@ class LayoutApp {
       canvas.addEventListener('drop', (e) => this.handleCanvasDrop(e));
       canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
     }
+
+    document.addEventListener('mousemove', this.boundHandleComponentDragMove);
+    document.addEventListener('mouseup', this.boundHandleComponentDragEnd);
 
     // Sidebar collapse buttons
     document.querySelectorAll('.sidebar-collapse-btn').forEach(btn => {
@@ -326,7 +340,7 @@ class LayoutApp {
     el.style.display = 'flex';
     el.style.alignItems = 'center';
     el.style.justifyContent = 'center';
-    el.style.cursor = 'pointer';
+    el.style.cursor = 'grab';
     el.style.userSelect = 'none';
     el.textContent = component.name;
 
@@ -335,7 +349,85 @@ class LayoutApp {
       this.selectComponent(component.id);
     });
 
+    el.addEventListener('mousedown', (e) => this.startComponentDrag(e, component.id));
+
     canvas.appendChild(el);
+  }
+
+  /**
+   * Start dragging an existing component on the canvas
+   */
+  startComponentDrag(event, id) {
+    // Only primary mouse button should trigger drag.
+    if (event.button !== 0) return;
+
+    const component = this.components.get(id);
+    const el = document.getElementById(id);
+    if (!component || !el) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.selectComponent(id);
+
+    this.dragState.isDragging = true;
+    this.dragState.componentId = id;
+    this.dragState.startMouseX = event.clientX;
+    this.dragState.startMouseY = event.clientY;
+    this.dragState.startX = component.x;
+    this.dragState.startY = component.y;
+
+    el.style.cursor = 'grabbing';
+    el.style.zIndex = '10';
+  }
+
+  /**
+   * Handle mouse move while dragging a component
+   */
+  handleComponentDragMove(event) {
+    if (!this.dragState.isDragging || !this.dragState.componentId) return;
+
+    const id = this.dragState.componentId;
+    const component = this.components.get(id);
+    const el = document.getElementById(id);
+    if (!component || !el) return;
+
+    const zoomScale = this.zoom / 100;
+    const deltaX = (event.clientX - this.dragState.startMouseX) / zoomScale;
+    const deltaY = (event.clientY - this.dragState.startMouseY) / zoomScale;
+
+    component.x = this.dragState.startX + deltaX;
+    component.y = this.dragState.startY + deltaY;
+
+    el.style.left = component.x + 'px';
+    el.style.top = component.y + 'px';
+  }
+
+  /**
+   * Handle mouse up to finish dragging a component
+   */
+  handleComponentDragEnd() {
+    if (!this.dragState.isDragging || !this.dragState.componentId) return;
+
+    const id = this.dragState.componentId;
+    const component = this.components.get(id);
+    const el = document.getElementById(id);
+
+    if (el) {
+      el.style.cursor = 'grab';
+      el.style.zIndex = '';
+    }
+
+    this.dragState.isDragging = false;
+    this.dragState.componentId = null;
+
+    if (component) {
+      this.emit('component-moved', {
+        id,
+        x: component.x,
+        y: component.y
+      });
+    }
   }
 
   /**
